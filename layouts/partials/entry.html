@@ -1,0 +1,42 @@
+{{ $ := .content }}
+
+<div class="entry">
+  <div class="date">
+    {{ if $.Params.end }}
+      {{ if eq $.Params.start $.Params.end}}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ else }}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }} –
+        {{ with $.Params.end }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ end }}
+    {{ else }}
+      Since
+      {{ with $.Params.start }}
+        {{ . | dateFormat "01/2006" }}
+      {{ end }}
+    {{ end }}
+  </div>
+  <div class="title">{{ $.Title }}</div>
+
+  {{ if $.Params.institution }}
+    <div class="institution">{{ $.Params.institution }}</div>
+  {{ end }}
+
+  <div class="content">
+    {{ $.Content }}
+  </div>
+
+  {{ if $.Params.tags }}
+    <div class="tags-container">
+      {{ range $key, $value := $.Params.tags }}
+        {{ partial "tag" $value }}
+      {{ end }}
+    </div>
+  {{ end }}
+</div>

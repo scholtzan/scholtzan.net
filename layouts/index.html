@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ partial "head.html" . }}
+
+  <body>
+
+    {{ partial "nav.html" . }}
+
+    <div role="main" class="container">
+      <h1 class="front-title">{{.Site.Title}}</h1>
+
+      <div class="profile">
+        Computer science student with a great passion in software architecture design and development of complex software systems. Looking for new challenges yet to be solved.
+      </div>
+
+      <div class="site-links">
+        <a class="btn btn-default site-link" href="/resume">
+          <i class="fa fa-file-text-o" aria-hidden="true"></i>
+          <div>Resume</div>
+        </a>
+        <a class="btn btn-default site-link" href="/blog">
+          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          <div>Blog</div>
+        </a>
+      </div>
+
+    </div>
+
+    {{ partial "footer.html" . }}
+
+  </body>
+</html>

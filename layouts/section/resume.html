@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ partial "head.html" . }}
+
+  <body data-spy="scroll" data-target="#navbar">
+
+    {{ partial "nav.html" . }}
+
+    <div role="main" class="container main-content">
+      <!-- <div class="navbar-container scroll-bar-container">
+          <div class="navbar navbar-custom navbar-fixed-side navbar-fixed-side-left scroll-bar" role="navigation">
+              <nav id="navbar" class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav">
+                      <li><a href="#edu"><i class="fa fa-graduation-cap" aria-hidden="true"></i></a></li>
+                      <li><a href="#work"><i class="fa fa-briefcase" aria-hidden="true"></i></a></li>
+                      <li><a href="#activities"><i class="fa fa-rocket" aria-hidden="true"></i></a></li>
+                      <li><a href="#awards"><i class="fa fa-trophy" aria-hidden="true"></i></a></li>
+                      <li><a href="#publications"><i class="fa fa-book" aria-hidden="true"></i></a></li>
+                      <li><a href="#projects"><i class="fa fa-code" aria-hidden="true"></i></a></li>
+                      <li><a href="#skills"><i class="fa fa-gears" aria-hidden="true"></i></a></li>
+                  </ul>
+              </nav>
+          </div>
+      </div> -->
+
+
+      <h1>Resume</h1>
+
+      <h2 id="edu"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Education</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "education" }}
+            {{ partial "entry" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+      <h2 id="work"><i class="fa fa-briefcase" aria-hidden="true"></i> Work Experience</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "work" }}
+            {{ partial "entry" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+      <h2 id="activities"><i class="fa fa-rocket" aria-hidden="true"></i> Activities and Competitions</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "activity" }}
+            {{ partial "entry" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+      <h2 id="awards"><i class="fa fa-trophy" aria-hidden="true"></i> Awards</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "award" }}
+            {{ partial "entry" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+      <h2 id="publications"><i class="fa fa-book" aria-hidden="true"></i> Publications</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "publication" }}
+            {{ partial "publication" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+
+      <h2 id="projects"><i class="fa fa-code" aria-hidden="true"></i> Selected Projects</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "project" }}
+            {{ partial "project" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+
+      <h2 id="skills"><i class="fa fa-gears" aria-hidden="true"></i> Skills</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "skill" }}
+            {{ $page.Content }}
+        {{ end }}
+      </div>
+
+
+
+    </div>
+
+    {{ partial "footer.html" . }}
+
+    <script>
+        $('body').scrollspy({
+            offset: 150
+        });
+    </script>
+
+  </body>
+</html>

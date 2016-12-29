@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scala Macros on Anna Scholtz</title>
+    <link>http://scholtzan.net/tags/scala-macros/</link>
+    <description>Recent content in Scala Macros on Anna Scholtz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://scholtzan.net/tags/scala-macros/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Macro-based Data Serialization to JSON with Scala</title>
+      <link>http://scholtzan.net/resume/projects/macba-json/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/projects/macba-json/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Developed as part of my bachelor thesis&lt;/li&gt;
+&lt;li&gt;Approach to efficiently serialize class instances and values to JSON&lt;/li&gt;
+&lt;li&gt;Utilization of Scala macros for generating serialization logic at compile time based on the
+class structure to increase performance&lt;/li&gt;
+&lt;li&gt;Proof of concept implementation that outperforms existing state-of-the-art libraries&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

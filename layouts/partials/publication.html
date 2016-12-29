@@ -1,0 +1,15 @@
+{{ $ := .content }}
+
+<div class="publication">
+  <div class="title">
+    {{ $.Title }}
+  </div>
+
+  <div class="publisher">
+    {{ $.Params.publisher }}
+  </div>
+
+  <div class="abstract">
+      {{ $.Content }}
+  </div>
+</div>

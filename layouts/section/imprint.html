@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ partial "head.html" . }}
+
+  <body>
+
+    {{ partial "nav.html" . }}
+
+    <div role="main" class="container main-content">
+
+      <h1>Imprint</h1>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "imprint" }}
+            {{ $page.Content }}
+        {{ end }}
+      </div>
+
+    </div>
+
+    {{ partial "footer.html" . }}
+
+
+  </body>
+</html>

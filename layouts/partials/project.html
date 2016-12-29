@@ -1,0 +1,63 @@
+{{ $ := .content }}
+
+<div class="entry">
+  <div class="date">
+    {{ if $.Params.end }}
+      {{ if eq $.Params.start $.Params.end}}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ else }}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }} –
+        {{ with $.Params.end }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ end }}
+    {{ else }}
+      Since
+      {{ with $.Params.start }}
+        {{ . | dateFormat "01/2006" }}
+      {{ end }}
+    {{ end }}
+  </div>
+  <div class="title">{{ $.Title }}</div>
+
+  <div class="content">
+    {{ $.Content }}
+  </div>
+
+
+  {{ if $.Params.site }}
+    <div class="site">
+      <i class="fa fa-info-circle" aria-hidden="true"></i>
+      <a href={{$.Params.site}}>Project Site</a>
+    </div>
+  {{ end }}
+
+
+  {{ if $.Params.demo }}
+    <div class="site">
+      <i class="fa fa-laptop" aria-hidden="true"></i>
+      <a href={{$.Params.demo}}>Demo</a>
+    </div>
+  {{ end }}
+
+
+  {{ if $.Params.repo }}
+    <div class="repo">
+      <i class="fa fa-github" aria-hidden="true"></i>
+      <a href="$.Params.repo">Repository</a>
+    </div>
+  {{ end }}
+
+  {{ if $.Params.tags }}
+    <div class="tags-container">
+      {{ range $key, $value := $.Params.tags }}
+        {{ partial "tag" $value }}
+      {{ end }}
+    </div>
+  {{ end }}
+
+</div>

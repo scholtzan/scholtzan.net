@@ -1,0 +1,22 @@
+baseurl = "http://scholtzan.net/"
+languageCode = "en-us"
+title = "Anna Scholtz"
+canonifyurls = true
+PygmentsCodeFences = true
+pygmentsuseclasses = false
+pygmentsstyle = "colorful"
+pluralizeListTitles = false
+builddrafts = false
+
+
+[[menu.main]]
+    name = "blog"
+    weight = -1
+    identifier = "blog"
+    url = "/blog/"
+
+[[menu.main]]
+    name = "resume"
+    weight = -2
+    identifier = "resume"
+    url = "/resume/"

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Scala Macros vs. Rust Macros</title>
+
+  <meta name="author" content="" />
+
+  
+
+  <link rel="alternate" href="http://scholtzan.net/index.xml" type="application/rss+xml" title="Anna Scholtz">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://scholtzan.net/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://scholtzan.net/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://scholtzan.net/css/pygment_highlights.css" />
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://scholtzan.net/">Anna Scholtz</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        <li>
+          <a title="resume" href="http://scholtzan.net/resume/">resume</a>
+  	    </li>
+      
+        <li>
+          <a title="blog" href="http://scholtzan.net/blog/">blog</a>
+  	    </li>
+      
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Scala Macros vs. Rust Macros</h1>
+      
+
+      
+      <span class="post-meta">Posted on 2016-09-04</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class="container">
+  <div class="row">
+    <article role="main" class="blog-post">
+        
+
+<p>Having worked with Scala for some years now, I have used Scala macros on several occasions and always have been impressed by how powerful they are.
+Recently, I started learning Rust and also came across its macro system.
+Although both metaprogramming facilities might seem similar at first sight, the way they work is actually quite different.
+In the following I will explore briefly how Rust macro rules and Scala macros work, how they are different and compare them against each other.</p>
+
+<h2 id="scala-macros">Scala Macros</h2>
+
+<p><a href="http://scalamacros.org/paperstalks/2013-04-22-LetOurPowersCombine.pdf">Scala macros</a> can be seen as metaprograms that have knowledge of the program structure and the ability to alter it.
+Macros are recognized by the compiler as methods to be invoked during compilation.
+The compiler will expand the macro implementation which results in an abstract syntax tree (AST) representing a Scala program or a part of it.
+The generated AST is then inlined at the caller site where the macro has been invoked.
+In this way, the final code contains no reference to the macro because the macro invocation is replaced by the resulting AST.</p>
+
+<p>Within macros, the representation of the program to be compiled is exposed.
+Scala offers an API that provides routines to manipulate the exposed program code as well as other methods for parsing, type checking, and error reporting.
+Generally, Scala macros work on the <em>abstract syntax tree</em>.</p>
+
+<p>As can be seen in the following code example, Scala macros consist of two parts: the <em>macro definition</em> and the <em>macro implementation</em>.</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">scala.reflect.macros.blackbox.Context</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">scala.language.experimental.macros</span>
+
+<span style="color: #888888">// macro definition</span>
+<span style="color: #008800; font-weight: bold">def</span> printFields<span style="color: #333333">[</span><span style="color: #333399; font-weight: bold">T</span><span style="color: #333333">](</span>obj<span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">T</span><span style="color: #333333">)</span><span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">String</span> <span style="color: #333333">=</span> macro printFieldsImpl<span style="color: #333333">[</span><span style="color: #333399; font-weight: bold">T</span><span style="color: #333333">]</span>
+
+<span style="color: #888888">// macro implementation</span>
+<span style="color: #008800; font-weight: bold">def</span> printFieldsImpl<span style="color: #333333">[</span><span style="color: #333399; font-weight: bold">T:</span> <span style="color: #333399; font-weight: bold">c.WeakTypeTag</span><span style="color: #333333">](</span>c<span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">Context</span><span style="color: #333333">)(</span>obj<span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">c.Expr</span><span style="color: #333333">[</span><span style="color: #333399; font-weight: bold">T</span><span style="color: #333333">])</span><span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">c.Tree</span> <span style="color: #333333">=</span> <span style="color: #333333">{</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">c.universe._</span>
+
+  <span style="color: #888888">// get all fields of obj</span>
+  <span style="color: #008800; font-weight: bold">val</span> fields<span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">Iterable</span><span style="color: #333333">[</span><span style="color: #333399; font-weight: bold">c.Symbol</span><span style="color: #333333">]</span> <span style="color: #008800; font-weight: bold">=</span> obj<span style="color: #333333">.</span>tree<span style="color: #333333">.</span>tpe<span style="color: #333333">.</span>decls
+    <span style="color: #333333">.</span>filter<span style="color: #333333">(</span>sym <span style="color: #008800; font-weight: bold">=&gt;</span> sym<span style="color: #333333">.</span>isMethod <span style="color: #333333">&amp;&amp;</span> sym<span style="color: #333333">.</span>asTerm<span style="color: #333333">.</span>isParamAccessor<span style="color: #333333">)</span>
+
+  <span style="color: #888888">// return field identifiers</span>
+  <span style="color: #008800; font-weight: bold">val</span> x <span style="color: #008800; font-weight: bold">=</span> q<span style="background-color: #fff0f0">&quot; ..${ fields map { field =&gt; field.name.toString } } &quot;</span>  
+  q<span style="background-color: #fff0f0">&quot;&quot;&quot; &quot;Fields: &quot; + $x &quot;&quot;&quot;</span>
+<span style="color: #333333">}</span>
+
+<span style="color: #888888">// case class User(name: String, age: Int)</span>
+<span style="color: #888888">// printFields(User(&quot;John Doe&quot;, 33)) =&gt; &quot;Fields: (name,age)&quot;</span>
+</pre></div>
+
+<p>Macro definition, like <code>printFields</code> look almost like normal function definitions in Scala.
+However, the function body starts with the keyword <code>macro</code> and is followed by the identifier of the macro implementation.</p>
+
+<p>Macro implementations, such as <code>printFieldsImpl</code>, contain the actual logic executed during compile time.
+The parameters as well as the return type of a macro implementation are expression trees, which wrap the AST.
+There are several ways to construct an expression tree within a macro implementation.
+One of the most convenient ways is to use <a href="http://docs.scala-lang.org/overviews/quasiquotes/intro.html">quasiquotes</a>.
+Quasiquote expressions are snippets of the following form: <code>q&quot;…[expressions]…&quot;</code>, where <code>expressions</code> can be a snippet of Scala code that will be transformed into an expression tree.</p>
+
+<p>In the example above, the first expression in the macro iterates over all fields of the parameter type passed to the macro and creates a collection of the field names.
+The second expression concatenates the string <code>&quot;Fields: &quot;</code> to the result of the first expression.
+Finally, an expression tree representing this created string will be returned.</p>
+
+<p>Another thing worth noting is that the macro in our example is generic.
+Instead of forcing to have parameters with a specific type, this macro can be used for function parameters with any type.</p>
+
+<p>Currently, macros are still an experimental feature in Scala.
+Therefore, to use them, the package <code>scala.language.experimental.macros</code> has to be imported.
+As macros influence the compilation process, they cannot be defined and used in the same compilation unit from where they are invoked.
+Instead, the project has to be split in at least two separated sub-projects with one of them containing the macro definitions.</p>
+
+<h2 id="rust-macros">Rust Macros</h2>
+
+<p>In Rust, macros are used for syntax extension.
+Just like in Scala, they are expanded during compile time even before any static checking.
+The AST is traversed and all macro invocations are replaced with their expansion.</p>
+
+<p>The following example shows the definition of a simple Rust macro that logs a message with a specific timestamp:</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="color: #008800; font-weight: bold">extern</span><span style="color: #bbbbbb"> </span><span style="color: #008800; font-weight: bold">crate</span><span style="color: #bbbbbb"> </span>chrono;<span style="color: #bbbbbb"></span>
+
+macro_rules<span style="color: #333333">!</span><span style="color: #bbbbbb"> </span>log<span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span>(<span style="color: #557799">$msg</span><span style="color: #333333">:</span>expr)<span style="color: #bbbbbb"> </span><span style="color: #333333">=&gt;</span><span style="color: #bbbbbb"> </span>(println<span style="color: #333333">!</span>(<span style="background-color: #fff0f0">&quot;Log {}: {}&quot;</span>,<span style="color: #bbbbbb"> </span>chrono<span style="color: #333333">::</span>Local<span style="color: #333333">::</span>now(),<span style="color: #bbbbbb"> </span><span style="color: #557799">$msg</span>));<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #888888">//log!(&quot;Error - Division by zero&quot;);</span>
+<span style="color: #888888">//→ Log 2016-09-03 17:39:18.773956 +02:00: Error - Division by zero</span>
+</pre></div>
+
+<p>Macro definitions start with the keyword <code>macro_rules!</code> followed by the macro&rsquo;s name.
+The body of the macro definition consists of rules expressed as pattern-matching cases.
+On the left, these pattern-matching cases describe the part of the AST that should be matched.
+Rust offers a <a href="https://doc.rust-lang.org/reference.html#macros">specific grammar</a> for describing how what parts of the AST should be matched.
+The right part of these cases consists of normal Rust code.
+It is also possible to capture values, such as in the example above, by using variables that are preceded by <code>$</code> and then added right before the AST part that should be captured.
+To use defined macros, a bang (<code>!</code>) needs to be added at the end of the macro name in order to distinguish them from normal function calls.</p>
+
+<p>Unlike macros in Scala, macros in Rust work on <em>token trees</em>.
+The inputs of a macro are token trees which are not interpreted by the parser.
+These token trees are based on lexical information and therefore macros do not have any type information.</p>
+
+<p>Another great quality of Rust&rsquo;s macro system is <em>hygiene</em>.
+This means that no shadowing of variables with the same name can occur because each macro expansion happens in a distinct <em>syntax context</em>.
+As each variable is tagged with the specific syntax context where it was introduced, there will be no conflicts.
+Although there are several workaround to achieve hygiene in Scala and with quasiquotes, currently <a href="http://docs.scala-lang.org/overviews/quasiquotes/hygiene">automatic hygiene is not supported</a>.</p>
+
+<h2 id="comparison-and-conclusion">Comparison and Conclusion</h2>
+
+<p>Now that we have a basic idea about how macros in both languages work, the following table gives a short summary and directly compares some of their features.
+I have also included some information about debugging macros and additional aspects.</p>
+
+<table>
+<thead>
+<tr>
+<th>&nbsp;</th>
+<th>Scala Macros</th>
+<th>Rust Macros</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Macro Input</td>
+<td>Expression Trees with type information.</td>
+<td>Token Trees with lexical information.</td>
+</tr>
+
+<tr>
+<td>Macro Return Type</td>
+<td>Expression Tree.</td>
+<td>No declared return type.</td>
+</tr>
+
+<tr>
+<td>Macro Declaration</td>
+<td>A macro consist of two parts: the <em>macro definition</em> containing the keyword <code>macro</code> and the <em>macro implementation</em>.</td>
+<td>Macros are declared using <code>macro_rules! &lt;name&gt; {...}</code></td>
+</tr>
+
+<tr>
+<td>Implementing Macros</td>
+<td>Expression trees within macros can be constructed by writing the AST manually using <a href="http://www.scala-lang.org/api/2.9.2/scala/reflect/generic/Trees.html">tree classes</a>, by employing the <code>reify</code> macro or by utilizing <a href="http://docs.scala-lang.org/overviews/quasiquotes/intro.html">quasiquotes</a>.</td>
+<td>Rules are defined using pattern-matching cases that match specific parts of an AST and specify the Rust code to be executed.</td>
+</tr>
+
+<tr>
+<td>Hygiene</td>
+<td>Automatic hygiene is currently (Scala 2.11) not supported, but will probably added in <a href="https://issues.scala-lang.org/browse/SI-7823">the future</a>.</td>
+<td>Rust macros are hygienic.</td>
+</tr>
+
+<tr>
+<td>Recursion</td>
+<td>Scala macros can call themselves.</td>
+<td>Macro implementations can contain invocations of themselves. Macros have a specific recursion limit that can be increased by adding <code>#![recursion_limit=&quot;…&quot;]</code></td>
+</tr>
+
+<tr>
+<td>Debugging</td>
+<td>The <code>-Ymacro-debug-lite</code> option will output generated code and the raw AST representation after the macro expansion. There is also <code>showRaw(...)</code> which can be used within the source code and will output the raw AST of an expression tree provided as parameter.</td>
+<td>To view the expanded macro: <code>rustc --pretty expanded</code>. To show syntax context information: <code>rustc --pretty expanded,hygiene</code>. To show a compiler messages every time a macro expands add <code>trace_macros!(true)</code>. <code>log_syntax!(...)</code> outputs provided parameters at compile time.</td>
+</tr>
+
+<tr>
+<td>Project Setup</td>
+<td>Separated sub-projects for macro definitions.</td>
+<td>Can be in the same source file in which they are used. Can be directly used after their definition. To use them in other files or projects they need to be <a href="https://doc.rust-lang.org/book/macros.html#scoping-and-macro-importexport">exported/imported</a>.</td>
+</tr>
+
+<tr>
+<td>Areas of Application</td>
+<td>code generation, program self-optimization, DSLs, code inspection, static type checking</td>
+<td>syntax extension</td>
+</tr>
+
+<tr>
+<td>More Information</td>
+<td><a href="http://docs.scala-lang.org/overviews/macros/overview.html">Scala Documentation about Macros</a></td>
+<td><a href="https://doc.rust-lang.org/book/macros.html">Rust Macros in &ldquo;The Book&rdquo;</a></td>
+</tr>
+</tbody>
+</table>
+
+<p>In both languages, macros are expanded early during compile time and provide means for compile-time metaprogramming.
+However, the way they work and the features they provide are quite different.
+All in all, for me Scala macros feel much more powerful compared to macro rules in Rust, as they are able to inspect types and are not solely based on lexical information.</p>
+
+<p>For more advanced compile-time metaprogramming Rust offers the possibility to create <a href="https://doc.rust-lang.org/book/compiler-plugins.html">compiler plugins</a>.
+These are more powerful but also more complex to define.</p>
+
+    </article>
+
+    <ul class="pager blog-pager">
+      
+      
+    </ul>
+
+  </div>
+</div>
+
+      
+
+    </div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          <li>
+            <a href="https://github.com/scholtzan" title="GitHub">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/scholtzan" title="Twitter">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="mailto:contact@scholtzan.net" title="Email me">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://de.linkedin.com/in/ascholtz" title="LinkedIn">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+
+    		  <li>
+      			<a href="http://scholtzan.net/blog/index.xml" title="RSS">
+      			  <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+      			</a>
+    		  </li>
+
+        </ul>
+        <p class="copyright text-muted">
+    		  Anna Scholtz
+  	    </p>
+
+        <div class="imprint-link">
+    		  <a href="http://scholtzan.net/imprint">Imprint</a>
+  	    </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="http://scholtzan.net/js/jquery-1.11.2.min.js"></script>
+<script src="http://scholtzan.net/js/bootstrap.min.js"></script>
+<script src="http://scholtzan.net/js/main.js"></script>
+
+
+  </body>
+</html>

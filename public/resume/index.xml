@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Resume on Anna Scholtz</title>
+    <link>http://scholtzan.net/resume/</link>
+    <description>Recent content in Resume on Anna Scholtz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://scholtzan.net/resume/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Black Hat Student Scholarship</title>
+      <link>http://scholtzan.net/resume/awards/black-hat/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/awards/black-hat/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Awarded with an Academic Pass for the conference Black Hat Europe 2015&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ISC Student Cluster Competition 2015</title>
+      <link>http://scholtzan.net/resume/activities/scc-2015/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/activities/scc-2015/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Member of &lt;a href=&#34;https://www.tu-chemnitz.de/turbotuc/scc/isc15/&#34;&gt;Team Chemnitz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;2&lt;sup&gt;nd&lt;/sup&gt; place in category &amp;ldquo;Highest Linpack&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Responsible for preparing and optimizing the application &lt;a href=&#34;http://www.pyfr.org/&#34;&gt;PyFR&lt;/a&gt; and the &lt;a href=&#34;http://www.netlib.org/benchmark/hpl/&#34;&gt;High-Performance Linpack Benchmark&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Macro-based Data Serialization to JSON with Scala</title>
+      <link>http://scholtzan.net/resume/projects/macba-json/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/projects/macba-json/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Developed as part of my bachelor thesis&lt;/li&gt;
+&lt;li&gt;Approach to efficiently serialize class instances and values to JSON&lt;/li&gt;
+&lt;li&gt;Utilization of Scala macros for generating serialization logic at compile time based on the
+class structure to increase performance&lt;/li&gt;
+&lt;li&gt;Proof of concept implementation that outperforms existing state-of-the-art libraries&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deutschlandstipendium (&#34;Germany Scholarship&#34;)</title>
+      <link>http://scholtzan.net/resume/awards/germany-scholarship-2014/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/awards/germany-scholarship-2014/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Sponsored by &lt;a href=&#34;https://www.tu-chemnitz.de/tu/freunde/&#34;&gt;Gesellschaft der Freunde der TU Chemnitz e.V.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ISC Student Cluster Competition 2014</title>
+      <link>http://scholtzan.net/resume/activities/scc-2014/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/activities/scc-2014/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Supporter of &lt;a href=&#34;https://www.tu-chemnitz.de/turbotuc/scc/isc14/&#34;&gt;Team Chemnitz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Winner of the &amp;ldquo;Fan Favorite Award&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Systematic Composition of Web-based Applications with Focus on Security</title>
+      <link>http://scholtzan.net/resume/publications/wam&#43;&#43;/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/publications/wam&#43;&#43;/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Abstract:&lt;/strong&gt; With increasing complexity of web-based applications, traditional engineering from scratch becomes an effortful matter with security aspects difficult to oversee. By composing applications from reusable building blocks, component-based web engineering approaches promise to reduce time to market while providing flexibility to changing conditions. Yet, they face a trade off between developing software in an agile fashion and establishing a solid security foundation. To mitigate risks through successful attacks, web engineers must however ensure security during the entire lifetime of web-based applications. The WAM++ approach combines well with existing methodology and assists engineers in designing web-based applications with a strong emphasis on security. Based on the theoretical foundation from prior work, WAM++ introduces a vocabulary to describe both the architecture of web-based applications and involved services. Furthermore, WAM++ supports engineers by an online diagraming tool that is prototypically implemented in the Sociddea identity management platform.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deutschlandstipendium (&#34;Germany Scholarship&#34;)</title>
+      <link>http://scholtzan.net/resume/awards/germany-scholarship-2013/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/awards/germany-scholarship-2013/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Sponsored by &lt;a href=&#34;http://www.tracetronic.de/&#34;&gt;TraceTronic&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scope-aware Delegations in Distributed Social Networks</title>
+      <link>http://scholtzan.net/resume/publications/dasc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/publications/dasc/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Abstract:&lt;/strong&gt; Swiftly meeting challenges by distributing tasks to the most suitable knowledge workers is an important matter, especially for network-centric organizations. In such distributed work environments delegations help to solve tasks faster, but also require measures to prevent delegatees from exceeding assigned competencies. By providing universal identification, WebID by W3C can assist in establishing a basis for distributed collaboration. Yet, it does not allow users for delegating access rights to others in a controlled way to act on their behalves. This paper presents the DASC approach to enable scope-aware delegations in distributed social networks using WebID. We introduce a vocabulary to describe delegations including associated constraints and demonstrate a prototypical implementation of DASC within an existing WebID identity provider.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Volunteer at the Chemnitzer StudentenNetz (CSN)</title>
+      <link>http://scholtzan.net/resume/activities/csn/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/activities/csn/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.csn.tu-chemnitz.de/&#34;&gt;Student initiative to administrate and maintain the internet connection in the dormitories on the TU Chemnitz campus&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Responsible for software development&lt;/li&gt;
+&lt;li&gt;Maintenance and extension work&lt;/li&gt;
+&lt;li&gt;Second-level user support&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Jugend Forscht (&#34;Youth Researches&#34;)</title>
+      <link>http://scholtzan.net/resume/activities/jugend-forscht/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/activities/jugend-forscht/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Presentation of the software developed as part of a special academic assignment (&amp;rdquo;&lt;a href=&#34;https://de.wikipedia.org/wiki/Besondere_Lernleistung&#34;&gt;Besondere Lernleistung&lt;/a&gt;&amp;rdquo;)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>31. Bundeswettbewerb Informatik (&#34;31. Federal Competition in Computer Science&#34;)</title>
+      <link>http://scholtzan.net/resume/activities/31-bwinf/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/activities/31-bwinf/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;First round: 1&lt;sup&gt;st&lt;/sup&gt; prize&lt;/li&gt;
+&lt;li&gt;Second round: 3&lt;sup&gt;rd&lt;/sup&gt; prize&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>e-fellows Online Scholarship</title>
+      <link>http://scholtzan.net/resume/awards/e-fellows-scholarship/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/awards/e-fellows-scholarship/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;As award for excellent educational achievements&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Best Graduating Student of the Graduation Class 2013 of the Matthes-Enderlein-Gymnasium Zwönitz</title>
+      <link>http://scholtzan.net/resume/awards/best-graduating-student/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/awards/best-graduating-student/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Girls@Google Day</title>
+      <link>http://scholtzan.net/resume/awards/girls-at-google/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/awards/girls-at-google/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;As award for the achievements in the competition &amp;ldquo;31. Bundeswettbewerb Informatik&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Two-day visit of the Google office in Munich&lt;/li&gt;
+&lt;li&gt;Tech talks about different computer science topics&lt;/li&gt;
+&lt;li&gt;Q&amp;amp;A session with Google employees&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scope-aware Delegations in Distributed Social Networks</title>
+      <link>http://scholtzan.net/resume/projects/dasc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/projects/dasc/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Approach to enable scope-aware delegations in distributed social networks using WebID&lt;/li&gt;
+&lt;li&gt;Enabling to outsource tasks in a controlled way to delegatee&amp;rsquo;s&lt;/li&gt;
+&lt;li&gt;Prevention of improper use of access rights by delegatee&amp;rsquo;s to allow more trustworthy collaboration&lt;/li&gt;
+&lt;li&gt;Prototypical implementation and integration into the WebID identity provider Soccidea&lt;/li&gt;
+&lt;li&gt;Publication of a scientific paper about the approach&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

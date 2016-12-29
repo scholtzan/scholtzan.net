@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Asp.Net on Anna Scholtz</title>
+    <link>http://scholtzan.net/tags/asp/index.net/</link>
+    <description>Recent content in Asp.Net on Anna Scholtz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://scholtzan.net/tags/asp.net/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Student Assistant</title>
+      <link>http://scholtzan.net/resume/work/student-assistant/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://scholtzan.net/resume/work/student-assistant/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Supported researchers at the chair of &amp;ldquo;Distributed and Self-organizing Systems&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Development of approaches to enhance the information security in personal data management by web applications and web services&lt;/li&gt;
+&lt;li&gt;Concepts mainly based on WebID&lt;/li&gt;
+&lt;li&gt;Realization of an approach for scope-aware delegations based on WebID&lt;/li&gt;
+&lt;li&gt;Implementation of a code annotation tool to support the migration of legacy software&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
