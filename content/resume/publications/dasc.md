@@ -2,6 +2,7 @@
 title = "Scope-aware Delegations in Distributed Social Networks"
 publisher = "Engineering the Web in the Big Data Era: 15th International Conference, ICWE 2015, Rotterdam, The Netherlands, June 23-26, 2015, Proceedings"
 type = "publication"
+doi = "https://doi.org/10.1007/978-3-319-19890-3_63"
 weight = -8
 +++
 

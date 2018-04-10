@@ -17,9 +17,9 @@ body {
 }
 
 p {
-  line-height: 1.25;
+  /*line-height: 1.25;*/
   margin: 10px 0;
-  font-size: 110%;
+  /*font-size: 110%;*/
   text-align: justify;
 }
 
@@ -32,6 +32,7 @@ h1 {
   margin-bottom: 2ex;
   font-size: 250%;
 }
+
 
 .front-title {
   font-size: 350%;
@@ -104,7 +105,7 @@ img {
 .profile {
   font-weight: 300;
   margin-top: 3ex;
-  font-size: 250%;
+  font-size: 200%;
 }
 
 .site-link {
@@ -123,6 +124,20 @@ img {
   text-align: center;
   margin-top: 5ex;
   margin-bottom: 15ex;
+}
+
+.volunteering-wrapper {
+  width: 100%;
+  min-height: 35ex;
+}
+
+.date-entries {
+  margin-bottom: 2ex;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
 }
 
 /* --- Navbar --- */
@@ -273,7 +288,17 @@ footer .copyright {
 
 .publication .abstract p {
   margin-top: 1ex;
+  text-justify: inter-word;
 }
+
+.publication a {
+  color: #404040;
+}
+
+.publication a:hover, a:focus {
+  color: #0869d8;
+}
+
 
 /* --- Entry --- */
 
@@ -284,8 +309,8 @@ footer .copyright {
   position: relative;
   float: left;
   padding-right: 5ex;
-  min-height: 10ex;
 }
+
 
 .entry .title {
   font-weight: 500;
@@ -306,6 +331,14 @@ footer .copyright {
   float: right;
 }
 
+.entry-info a {
+  color: #404040;
+}
+
+.entry-info a:hover, a:focus {
+  color: #0869d8;
+}
+
 .entry .institution {
   color: #808080;
 }
@@ -314,6 +347,29 @@ footer .copyright {
   margin-top: 0.5ex;
 }
 
+.date-entry-date {
+  min-width: 22%;
+  float: left;
+}
+
+.date-entry-title {
+  width: 78%;
+  font-weight: 500;
+  font-size: 120%;
+  float: left;
+  margin-bottom: 0.5ex;
+}
+
+.date-entries {
+  margin-top: 2ex;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  float: left;
+  margin-bottom: 6ex;
+}
 
 /* --- Post preview --- */
 
@@ -549,7 +605,7 @@ table tr td :last-child {
    margin-left: 8.39em;
    width: 2px;
    height: 100%;
-   background: #CCD1D9;
+   background: #808080;
    z-index: 1
 }
 
@@ -579,7 +635,7 @@ table tr td :last-child {
    min-width: 16px;
    height: 16px;
    border-radius: 50%;
-   background: #CCD1D9;
+   background: #808080;
    margin-top: 10px;
    z-index: 9999
 }
@@ -597,7 +653,7 @@ table tr td :last-child {
 
 
 .timeline-content span {
-   color: #a4a4a4;
+   color: #808080;
 }
 
 .timeline-content p {

@@ -20,7 +20,6 @@
         </div>
       </div>
 
-      <hr>
 
       <h2 id="work"> Work Experience</h2>
 
@@ -32,27 +31,39 @@
         </div>
       </div>
 
-      <hr>
 
-      <!-- todo: competitions -->
 
-      <h2 id="activities">Volunteering</h2>
+      <h2 id="volunteering">Volunteering</h2>
 
-      <div class="wrapper">
-        {{ range $index, $page := where .Data.Pages "Type" "activity" }}
+      <div class="wrapper volunteering-wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "volunteering" }}
             {{ partial "entry" (dict "content" $page) }}
         {{ end }}
       </div>
 
-      <h2 id="awards"><i class="fa fa-trophy" aria-hidden="true"></i> Awards</h2>
+
+      <h2 id="competitions">Competitions</h2>
 
       <div class="wrapper">
-        {{ range $index, $page := where .Data.Pages "Type" "award" }}
+        {{ range $index, $page := where .Data.Pages "Type" "competition" }}
             {{ partial "entry" (dict "content" $page) }}
         {{ end }}
       </div>
 
-      <h2 id="publications"><i class="fa fa-book" aria-hidden="true"></i> Publications</h2>
+
+      <h2 id="awards">Awards</h2>
+
+      <div class="wrapper">
+        <div class="date-entries">
+          {{ range $index, $page := where .Data.Pages "Type" "award" }}
+              {{ partial "date-entry" (dict "content" $page) }}
+          {{ end }}
+        </div>
+      </div>
+
+
+
+      <h2 id="publications">Publications</h2>
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "publication" }}
@@ -61,16 +72,16 @@
       </div>
 
 
-      <h2 id="projects"><i class="fa fa-code" aria-hidden="true"></i> Selected Projects</h2>
+      <h2 id="projects">Selected Projects</h2>
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "project" }}
-            {{ partial "project" (dict "content" $page) }}
+            {{ partial "entry" (dict "content" $page) }}
         {{ end }}
       </div>
 
 
-      <h2 id="skills"><i class="fa fa-gears" aria-hidden="true"></i> Skills</h2>
+      <h2 id="skills">Skills</h2>
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "skill" }}

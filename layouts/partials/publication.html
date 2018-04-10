@@ -2,7 +2,7 @@
 
 <div class="publication">
   <div class="title">
-    {{ $.Title }}
+    {{ $.Title }} <a href={{ $.Params.doi }}> <i class="fa fa-book" aria-hidden="true"></i></a>
   </div>
 
   <div class="publisher">
@@ -10,6 +10,6 @@
   </div>
 
   <div class="abstract">
-      {{ $.Content }} <a href={{ $.Params.doi }}><i class="fa fa-book" aria-hidden="true"></i></a>
+      {{ $.Content }}
   </div>
 </div>
