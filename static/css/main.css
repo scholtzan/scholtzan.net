@@ -17,7 +17,7 @@ body {
 }
 
 p {
-  line-height: 1.5;
+  line-height: 1.25;
   margin: 10px 0;
   font-size: 110%;
   text-align: justify;
@@ -49,11 +49,11 @@ h3 {
 
 ul {
   list-style-type: square;
+  padding: 0;
+  margin: 0;
+  margin-left: 1.3em; 
 }
 
-li {
-  margin-bottom: 0.5ex;
-}
 
 .container {
   max-width: 90ex;
@@ -280,16 +280,30 @@ footer .copyright {
 .entry {
   margin-top: 3ex;
   margin-bottom: 2ex;
+  max-width: 50%;
+  position: relative;
+  float: left;
+  padding-right: 5ex;
+  min-height: 10ex;
 }
 
 .entry .title {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 120%;
 }
 
 .entry .date {
   color: #808080;
-  font-weight: bold;
+}
+
+.entry-header {
+  border-bottom: 1px solid #0869d8;
+  width: 100%;
+}
+
+.entry .entry-info {
+  text-align: right;
+  float: right;
 }
 
 .entry .institution {
@@ -359,79 +373,19 @@ footer .copyright {
   line-height: 200%;
 }
 
+
 .tag {
+  font-family: "Inconsolata", monospace;
+  font-weight: bold;
   color: #808080;
   border: 1px solid #808080;
-  border-radius: 7px;
+  border-radius: 5px;
   padding: 2px;
-  font-size: 80%;
+  font-size: 70%;
   white-space: nowrap;
-  margin-right: 0.1ex;
-  margin-bottom: 0.3ex;
+  margin-right: 0.2ex;
+  margin-bottom: 1ex;
   display: inline-block;
-}
-
-
-/* --- Resume Scroll Bar --- */
-
-
-.scroll-bar {
-    color: #ffffff;
-    border-radius:0;
-    position: relative;
-    float: left;
-    text-align: center;
-    margin-top: 20ex;
-    background-color: white;
-    margin-left: -10ex;
-}
-
-.scroll-bar .navbar-nav > li > a {
-    color: #808080;
-}
-
-.scroll-bar .navbar-nav > li > a:hover, .navbar-custom .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
-    color: #585858;
-    font-size: 100%;
-    font-weight: bold;
-    background: none;
-}
-
-.navbar-fixed-side {
-  position: fixed;
-  border-width: 0;
-  z-index: 1030;
-  min-height: 5px;
-  min-width: 5px;
-  max-width: 200px;
-  margin-bottom: 0;
-  border: 0px solid transparent;
-}
-
-.navbar-fixed-side .nav > li > a {
-  width: 100%;
-  padding: 5px;
-}
-
-.navbar-fixed-side .navbar-nav {
-  margin: 0;
-}
-
-.navbar-fixed-side .navbar-nav > li {
-  float: none;
-}
-
-.navbar-fixed-side .navbar-nav > li > a {
-  padding: 5px;
-  line-height: 20px;
-}
-
-
-
-@media (min-width: 0px) and (max-width: 900px) {
-    .scroll-bar {
-        display: none;
-    }
 }
 
 
@@ -577,3 +531,97 @@ table tr th :last-child,
 table tr td :last-child {
   margin-bottom: 0;
 }
+
+
+/* --- Timeline --- */
+
+
+.timeline {
+   width: 100%;
+   position: relative;
+   overflow: hidden;
+}
+
+.timeline:before {
+   content: '';
+   position: absolute;
+   top: 0;
+   margin-left: 8.39em;
+   width: 2px;
+   height: 100%;
+   background: #CCD1D9;
+   z-index: 1
+}
+
+.timeline-date {
+  margin-top: 5px;
+  float: right;
+  min-width: 8em;
+  text-align: right;
+  padding-right: 10px; 
+}
+
+.timeline-block {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -moz-box;
+   display: flex;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -moz-box-pack: justify;
+   justify-content: space-between;
+   clear: both;
+   float: left;
+}
+
+
+.marker {
+   min-width: 16px;
+   height: 16px;
+   border-radius: 50%;
+   background: #CCD1D9;
+   margin-top: 10px;
+   z-index: 9999
+}
+
+.timeline-content{
+  padding-left: 10px;
+  margin-bottom: 1ex;
+}
+
+.timeline-content .timeline-title {
+   margin-top: 5px;
+   font-size: 120%;
+   font-weight: 500
+}
+
+
+.timeline-content span {
+   color: #a4a4a4;
+}
+
+.timeline-content p {
+   line-height: 1.5em;
+   word-spacing: 1px;
+   margin-top: 0em;
+}
+
+@media screen and (max-width: 768px) {
+   .container:before {
+      left: 8px;
+      width: 2px;
+   }
+   .timeline-block {
+      width: 100%;
+      margin-bottom: 30px;
+   }
+   .timeline-block-right {
+      float: none;
+   }
+
+   .timeline-block-left {
+      float: none;
+      direction: ltr;
+   }
+}
+

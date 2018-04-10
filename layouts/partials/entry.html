@@ -1,27 +1,36 @@
 {{ $ := .content }}
 
 <div class="entry">
-  <div class="date">
-    {{ if $.Params.end }}
-      {{ if eq $.Params.start $.Params.end}}
-        {{ with $.Params.start }}
-          {{ . | dateFormat "01/2006" }}
+  <div class="entry-header">
+    <span class="date">
+      {{ if $.Params.end }}
+        {{ if eq $.Params.start $.Params.end}}
+          {{ with $.Params.start }}
+            {{ . | dateFormat "01/2006" }}
+          {{ end }}
+        {{ else }}
+          {{ with $.Params.start }}
+            {{ . | dateFormat "01/2006" }}
+          {{ end }} –
+          {{ with $.Params.end }}
+            {{ . | dateFormat "01/2006" }}
+          {{ end }}
         {{ end }}
       {{ else }}
+        Since
         {{ with $.Params.start }}
-          {{ . | dateFormat "01/2006" }}
-        {{ end }} –
-        {{ with $.Params.end }}
           {{ . | dateFormat "01/2006" }}
         {{ end }}
       {{ end }}
-    {{ else }}
-      Since
-      {{ with $.Params.start }}
-        {{ . | dateFormat "01/2006" }}
+    </span>
+    <span class="entry-info">
+      {{ if $.Params.website }}
+      <span><a href={{ $.Params.website }} ><i class="fa fa-globe" aria-hidden="true"></i></a></span>
       {{ end }}
-    {{ end }}
+    </span>
   </div>
+
+
   <div class="title">{{ $.Title }}</div>
 
   {{ if $.Params.institution }}

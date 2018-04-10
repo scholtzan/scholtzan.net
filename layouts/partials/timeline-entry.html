@@ -1,0 +1,39 @@
+{{ $ := .content }}
+
+
+<div class="timeline-block">
+  <div class="timeline-date">
+    {{ if $.Params.end }}
+      {{ if eq $.Params.start $.Params.end}}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ else }}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }} –
+        {{ with $.Params.end }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ end }}
+    {{ else }}
+      Since
+      {{ with $.Params.start }}
+        {{ . | dateFormat "01/2006" }}
+      {{ end }}
+    {{ end }}</div>
+  <div class="marker"></div>
+  <div class="timeline-content">
+     <div class="timeline-title">{{$.Title}}</div>
+     <span>{{$.Params.institution}}</span>
+     <p>{{$.Content}}</p>
+     {{ if $.Params.tags }}
+        <div class="tags-container">
+          {{ range $key, $value := $.Params.tags }}
+            {{ partial "tag" $value }}
+          {{ end }}
+        </div>
+      {{ end }}
+  </div>
+</div>
+

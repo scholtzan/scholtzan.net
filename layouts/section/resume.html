@@ -8,42 +8,35 @@
     {{ partial "nav.html" . }}
 
     <div role="main" class="container main-content">
-      <!-- <div class="navbar-container scroll-bar-container">
-          <div class="navbar navbar-custom navbar-fixed-side navbar-fixed-side-left scroll-bar" role="navigation">
-              <nav id="navbar" class="navbar-collapse collapse">
-                  <ul class="nav navbar-nav">
-                      <li><a href="#edu"><i class="fa fa-graduation-cap" aria-hidden="true"></i></a></li>
-                      <li><a href="#work"><i class="fa fa-briefcase" aria-hidden="true"></i></a></li>
-                      <li><a href="#activities"><i class="fa fa-rocket" aria-hidden="true"></i></a></li>
-                      <li><a href="#awards"><i class="fa fa-trophy" aria-hidden="true"></i></a></li>
-                      <li><a href="#publications"><i class="fa fa-book" aria-hidden="true"></i></a></li>
-                      <li><a href="#projects"><i class="fa fa-code" aria-hidden="true"></i></a></li>
-                      <li><a href="#skills"><i class="fa fa-gears" aria-hidden="true"></i></a></li>
-                  </ul>
-              </nav>
-          </div>
-      </div> -->
-
-
       <h1>Resume</h1>
 
-      <h2 id="edu"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Education</h2>
+      <h2 id="edu">Education</h2>
 
       <div class="wrapper">
-        {{ range $index, $page := where .Data.Pages "Type" "education" }}
-            {{ partial "entry" (dict "content" $page) }}
-        {{ end }}
+        <div class="timeline">
+          {{ range $index, $page := where .Data.Pages "Type" "education" }}
+              {{ partial "timeline-entry" (dict "content" $page) }}
+          {{ end }}
+        </div>
       </div>
 
-      <h2 id="work"><i class="fa fa-briefcase" aria-hidden="true"></i> Work Experience</h2>
+      <hr>
+
+      <h2 id="work"> Work Experience</h2>
 
       <div class="wrapper">
-        {{ range $index, $page := where .Data.Pages "Type" "work" }}
-            {{ partial "entry" (dict "content" $page) }}
-        {{ end }}
+        <div class="timeline">
+          {{ range $index, $page := where .Data.Pages "Type" "work" }}
+              {{ partial "timeline-entry" (dict "content" $page) }}
+          {{ end }}
+        </div>
       </div>
 
-      <h2 id="activities"><i class="fa fa-rocket" aria-hidden="true"></i> Activities and Competitions</h2>
+      <hr>
+
+      <!-- todo: competitions -->
+
+      <h2 id="activities">Volunteering</h2>
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "activity" }}
