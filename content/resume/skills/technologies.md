@@ -17,3 +17,4 @@ weight = -4
 * HTML, CSS, Less, jQuery
 * ASP.NET
 * Angular.js, Knockout.js
+* Muse SDK

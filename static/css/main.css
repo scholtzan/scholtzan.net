@@ -308,9 +308,12 @@ footer .copyright {
   max-width: 50%;
   position: relative;
   float: left;
-  padding-right: 5ex;
+  padding-right: 0ex;
 }
 
+.wrapper .entry:nth-child(even) {
+  padding-left: 4%;
+}
 
 .entry .title {
   font-weight: 500;
@@ -347,17 +350,22 @@ footer .copyright {
   margin-top: 0.5ex;
 }
 
+.date-entry {
+  display: block;
+  min-width: 100%;
+}
+
 .date-entry-date {
   min-width: 22%;
   float: left;
 }
 
 .date-entry-title {
-  width: 78%;
+  min-width: 100%;
   font-weight: 500;
   font-size: 120%;
   float: left;
-  margin-bottom: 0.5ex;
+  margin-bottom: 1ex;
 }
 
 .date-entries {
@@ -658,7 +666,9 @@ table tr td :last-child {
    border-radius: 50%;
    background: #a8a6a6;
    margin-top: 10px;
-   z-index: 9999
+   z-index: 9999;
+   position: relative;
+   float: left;
 }
 
 .timeline-content{
@@ -681,25 +691,7 @@ table tr td :last-child {
    line-height: 1.5em;
    word-spacing: 1px;
    margin-top: 0em;
-}
-
-@media screen and (max-width: 768px) {
-   .container:before {
-      left: 8px;
-      width: 2px;
-   }
-   .timeline-block {
-      width: 100%;
-      margin-bottom: 30px;
-   }
-   .timeline-block-right {
-      float: none;
-   }
-
-   .timeline-block-left {
-      float: none;
-      direction: ltr;
-   }
+   min-width: 100%;
 }
 
 
@@ -789,7 +781,7 @@ ul.bargraph li.loc span.right {
   margin-bottom: 1ex;
   margin-right: 5ex;
   margin-top: 2ex;
-  width: 25%;
+  min-width: 25%;
 }
 
 .language .title {
@@ -800,6 +792,7 @@ ul.bargraph li.loc span.right {
 .proficiency-chart {
   color: #0869d8;
   float: right;
+  font-size: 18px;
   margin-left: 0.5ex;
 }
 

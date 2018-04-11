@@ -1,7 +1,7 @@
 {{ $ := .content }}
 
 <div class="date-entry">
-    <span class="date-entry-date">
+    <div class="date-entry-date">
       {{ if $.Params.end }}
         {{ if eq $.Params.start $.Params.end}}
           {{ with $.Params.start }}
@@ -21,12 +21,7 @@
           {{ . | dateFormat "01/2006" }}
         {{ end }}
       {{ end }}
-    </span>
-    <span class="entry-info">
-      {{ if $.Params.website }}
-      <span><a href={{ $.Params.website }} ><i class="fa fa-globe" aria-hidden="true"></i></a></span>
-      {{ end }}
-    </span>
+    </div>
 
   <div class="date-entry-title">{{ $.Title }}</div>
 </div>

@@ -1,6 +1,6 @@
 +++
 title = "Korean"
-stars = "●○○○○○"
+stars = "✦✧✧✧✧✧"
 proficiency = "Basic knowledge"
 type = "language"
 weight = -2

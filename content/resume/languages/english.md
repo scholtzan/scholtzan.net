@@ -1,6 +1,6 @@
 +++
 title = "English"
-stars = "●●●●●○"
+stars = "✦✦✦✦✦✧"
 proficiency = "Full professional proficiency"
 type = "language"
 weight = -5

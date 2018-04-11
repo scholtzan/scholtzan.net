@@ -20,3 +20,9 @@ builddrafts = false
     weight = -2
     identifier = "resume"
     url = "/resume/"
+
+[[menu.main]]
+    name = "travels"
+    weight = 0
+    identifier = "travels"
+    url = "http://travel.scholtzan.net"

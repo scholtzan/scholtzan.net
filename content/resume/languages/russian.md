@@ -1,6 +1,6 @@
 +++
 title = "Russian"
-stars = "●○○○○○"
+stars = "✦✧✧✧✧✧"
 proficiency = "Basic knowledge"
 type = "language"
 weight = -3
