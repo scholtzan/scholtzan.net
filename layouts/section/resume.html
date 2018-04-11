@@ -85,11 +85,25 @@
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "skill" }}
-            {{ $page.Content }}
+            {{ partial "skill-entry" (dict "content" $page) }}
         {{ end }}
       </div>
 
+      <h2 id="interests">Natural Languages</h2>
 
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "language" }}
+            {{ partial "language" (dict "content" $page) }}
+        {{ end }}
+      </div>
+
+      <h2 id="interests">Interests</h2>
+
+      <div class="wrapper">
+        {{ range $index, $page := where .Data.Pages "Type" "interests" }}
+            {{ $page.Content }}
+        {{ end }}
+      </div>
 
     </div>
 

@@ -3,6 +3,7 @@ title = "Web-based Management Software for Reserving Rooms and Items"
 start = "2012-01-01"
 end = "2013-06-01"
 type = "project"
+document = "http://scholtzan.net/content/bell.pdf"
 weight = -5
 tags = ["PHP", "JavaScript", "Dojo", "RESTful Web Services", "MySQL"]
 +++

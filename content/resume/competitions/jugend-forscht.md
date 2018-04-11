@@ -4,6 +4,7 @@ start = "2013-03-01"
 end = "2013-03-01"
 type = "competition"
 website = "https://www.jugend-forscht.de/"
+document = "http://scholtzan.net/content/bell.pdf"
 weight = -7
 +++
 

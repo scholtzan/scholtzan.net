@@ -27,6 +27,15 @@
       {{ if $.Params.website }}
       <span><a href={{ $.Params.website }} ><i class="fa fa-globe" aria-hidden="true"></i></a></span>
       {{ end }}
+      {{ if $.Params.repo }}
+      <span><a href={{ $.Params.website }} ><i class="fab fa-github" aria-hidden="true"></i></a></span>
+      {{ end }}
+      {{ if $.Params.document }}
+      <span><a href={{ $.Params.document }} ><i class="fa fa-file-alt" aria-hidden="true"></i></a></span>
+      {{ end }}
+      {{ if $.Params.demo }}
+      <span><a href={{ $.Params.demo }} ><i class="fa fa-laptop" aria-hidden="true"></i></a></span>
+      {{ end }}
     </span>
   </div>
 

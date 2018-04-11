@@ -2,6 +2,7 @@
 title = "Systematic Composition of Web-based Applications with Focus on Security"
 publisher = "iiWAS2015 11-13 December, 2015, Brussels, Belgium"
 type = "publication"
+doi = "https://doi.org/10.1145/2837185.2837250"
 weight = -9
 +++
 

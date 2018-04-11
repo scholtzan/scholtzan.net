@@ -3,6 +3,7 @@ title = "Macro-based Data Serialization to JSON with Scala"
 start = "2016-02-01"
 end = "2016-06-01"
 type = "project"
+document = "http://scholtzan.net/content/bachelor-thesis.pdf"
 weight = -6
 repo = "https://github.com/scholtzan/macba-json"
 tags = ["Scala", "Scala Macros", "ConTeXt"]

@@ -25,7 +25,7 @@
   <div class="marker"></div>
   <div class="timeline-content">
      <div class="timeline-title">{{$.Title}}</div>
-     <span>{{$.Params.institution}}</span>
+     <span class="timeline-institution">{{$.Params.institution}}</span>
      <p>{{$.Content}}</p>
      {{ if $.Params.tags }}
         <div class="tags-container">
@@ -36,4 +36,3 @@
       {{ end }}
   </div>
 </div>
-

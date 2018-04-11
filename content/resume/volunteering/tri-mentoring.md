@@ -4,7 +4,7 @@ start = "2017-10-01"
 end = "2018-03-30"
 website = "https://www.cs.ubc.ca/students/undergrad/careers/tri-mentoring-program"
 type = "volunteering"
-weight = -8
+weight = -12
 tags = ["Career", "Networking"]
 +++
 

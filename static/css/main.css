@@ -371,6 +371,27 @@ footer .copyright {
   margin-bottom: 6ex;
 }
 
+.skill-entry {
+  margin-top: 3ex;
+  margin-bottom: 2ex;
+  min-width: 45%;
+  position: relative;
+  float: left;
+  margin-right: 4ex;
+}
+
+.big-icon {
+  float: left;
+  text-align: center;
+  margin-right: 3ex;
+  margin-top: 0.5ex;
+}
+
+.big-icon i {
+  font-size: 300%;
+  color: #404040;
+}
+
 /* --- Post preview --- */
 
 .post-preview {
@@ -433,8 +454,8 @@ footer .copyright {
 .tag {
   font-family: "Inconsolata", monospace;
   font-weight: bold;
-  color: #808080;
-  border: 1px solid #808080;
+  color: #0869d8;
+  border: 1px solid #0869d8;
   border-radius: 5px;
   padding: 2px;
   font-size: 70%;
@@ -605,7 +626,7 @@ table tr td :last-child {
    margin-left: 8.39em;
    width: 2px;
    height: 100%;
-   background: #808080;
+   background: #a8a6a6;
    z-index: 1
 }
 
@@ -635,7 +656,7 @@ table tr td :last-child {
    min-width: 16px;
    height: 16px;
    border-radius: 50%;
-   background: #808080;
+   background: #a8a6a6;
    margin-top: 10px;
    z-index: 9999
 }
@@ -652,7 +673,7 @@ table tr td :last-child {
 }
 
 
-.timeline-content span {
+.timeline-content .timeline-institution {
    color: #808080;
 }
 
@@ -681,3 +702,108 @@ table tr td :last-child {
    }
 }
 
+
+
+
+/* --- Barchart --- */
+
+ul.bargraph {
+  padding: 0;
+  margin: 0;
+}
+
+ul.bargraph li {
+  height: 1.5em;
+  color: white;
+  text-align: left;
+  line-height: 1.5em;
+  margin-bottom: 2px;
+  padding-left: 3px;
+  background: #0869d8;
+}
+
+ul.bargraph li.scala {
+  width:80%;
+}
+
+ul.bargraph li.python {
+  width:25%;
+}
+
+ul.bargraph li.csharp {
+  width:15%;
+}
+
+ul.bargraph li.rust {
+  width:40%;
+}
+
+ul.bargraph li.java {
+  width: 20%;
+}
+
+ul.bargraph li.c {
+  width: 20%;
+}
+
+ul.bargraph li.php {
+  width: 12%;
+}
+
+ul.bargraph li.swift {
+  width: 20%;
+}
+
+ul.bargraph li.javascript {
+  width: 70%;
+}
+
+#skills-charts {
+  width: 100%;
+}
+
+ul.bargraph li.loc {
+  background: white;
+  font-size: 70%;
+  color: black;
+  border-top: 1px solid black;
+  width:100%;
+  list-style-type: none;
+}
+
+ul.bargraph li.loc span.left {
+    float: left;
+    width: 35%;
+  }
+
+ul.bargraph li.loc span.right {
+  float: right;
+  margin-right: 3px;
+}
+
+/* --- Languages --- */
+
+
+.language {
+  float: left;
+  margin-bottom: 1ex;
+  margin-right: 5ex;
+  margin-top: 2ex;
+  width: 25%;
+}
+
+.language .title {
+  font-weight: 500;
+  font-size: 120%;
+}
+
+.proficiency-chart {
+  color: #0869d8;
+  float: right;
+  margin-left: 0.5ex;
+}
+
+.proficiency {
+  font-size: 90%;
+  color: #808080;
+}

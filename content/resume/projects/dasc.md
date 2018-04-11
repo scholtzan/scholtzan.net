@@ -5,6 +5,7 @@ end = "2015-06-01"
 type = "project"
 website = "https://vsr.informatik.tu-chemnitz.de/demos/sociddea"
 document = "https://doi.org/10.1007/978-3-319-19890-3_63"
+demo = "https://vsr-demo.informatik.tu-chemnitz.de/sociddea/"
 weight = -5
 tags = ["C#", "JavaScript", "WebID", "RDF", "Knockout.js", "jQuery", "RESTful Webservices"]
 +++

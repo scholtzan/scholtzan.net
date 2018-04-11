@@ -4,6 +4,7 @@ start = "2017-09-01"
 end = "2017-12-30"
 type = "project"
 weight = -8
+document = "http://scholtzan.net/content/sensing-interruptions.pdf"
 tags = ["Python", "Machine Learning", "EEG", "Lab Study"]
 +++
 
