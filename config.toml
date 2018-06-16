@@ -1,4 +1,4 @@
-baseurl = "http://scholtzan.net/"
+baseurl = "https://scholtzan.net/"
 languageCode = "en-us"
 title = "Anna Scholtz"
 canonifyurls = true
@@ -25,4 +25,4 @@ builddrafts = false
     name = "travels"
     weight = 0
     identifier = "travels"
-    url = "http://travel.scholtzan.net"
+    url = "https://travel.scholtzan.net"
