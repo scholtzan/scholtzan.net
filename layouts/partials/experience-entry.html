@@ -1,0 +1,36 @@
+{{ $ := .content }}
+
+<div class="experience-entry">
+  <span class="date">
+    {{ if $.Params.end }}
+      {{ if eq $.Params.start $.Params.end}}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ else }}
+        {{ with $.Params.start }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }} –
+        {{ with $.Params.end }}
+          {{ . | dateFormat "01/2006" }}
+        {{ end }}
+      {{ end }}
+    {{ else }}
+      Since
+      {{ with $.Params.start }}
+        {{ . | dateFormat "01/2006" }}
+      {{ end }}
+    {{ end }}
+  </span>
+
+  <div class="title">{{$.Title}}</div>
+     <div class="institution">{{$.Params.institution}}</div>
+     <p>{{$.Content}}</p>
+     {{ if $.Params.tags }}
+        <div class="tags-container">
+          {{ range $key, $value := $.Params.tags }}
+            {{ partial "tag" $value }}
+          {{ end }}
+        </div>
+      {{ end }}
+</div>

@@ -8,4 +8,6 @@ tags = ["Project Management", "Software Planning", "JavaScript", "Java"]
 +++
 
 Teaching assistant for the course 319 Software Engineering project.
-Supervise student teams in implementing a contractor management system and expense claim system for Coast Capital.
+Supervised student teams in implementing a contractor management system and expense claim system for Coast Capital.
+
+Teaching assistant for the course 304 Databases. Supported instructor during lectures, held tutorials, supervised project groups that had to implement a database system, held office hours and graded exams.

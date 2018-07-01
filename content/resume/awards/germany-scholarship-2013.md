@@ -6,4 +6,3 @@ type = "award"
 weight = -8
 +++
 
-* Sponsored by [TraceTronic](http://www.tracetronic.de/)

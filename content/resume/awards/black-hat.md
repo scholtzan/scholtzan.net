@@ -6,4 +6,3 @@ type = "award"
 weight = -10
 +++
 
-* Awarded with an Academic Pass for the conference Black Hat Europe 2015

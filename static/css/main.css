@@ -42,6 +42,7 @@ h1 {
 h2 {
   margin-top: 3ex;
   font-size: 150%;
+  font-weight: bold;
 }
 
 h3 {
@@ -300,6 +301,31 @@ footer .copyright {
 }
 
 
+/* --- Experience Entry --- */
+
+.experience-entry {
+  margin-top: 3ex;
+  margin-bottom: 2ex;
+}
+
+.experience-entry .title {
+  font-weight: 500;
+  font-size: 120%;
+}
+
+.experience-entry .institution {
+  color: #808080;
+  margin-top: -0.5ex;
+  margin-bottom: -1ex;
+}
+
+.experience-entry .date {
+  float: right;
+  font-family: 'Inconsolata';
+  font-weight: 100;
+  color: #808080;
+}
+
 /* --- Entry --- */
 
 .entry {
@@ -382,10 +408,15 @@ footer .copyright {
 .skill-entry {
   margin-top: 3ex;
   margin-bottom: 2ex;
-  min-width: 45%;
+  min-width: 25%;
   position: relative;
   float: left;
   margin-right: 4ex;
+}
+
+.skill-entry > ul {
+  list-style-type: none;
+  margin-left: 0ex;
 }
 
 .big-icon {
@@ -460,8 +491,8 @@ footer .copyright {
 
 
 .tag {
-  font-family: "Inconsolata", monospace;
-  font-weight: bold;
+  font-family: "Source Code Pro", monospace;
+  font-weight: 600;
   color: #0869d8;
   border: 1px solid #0869d8;
   border-radius: 5px;
@@ -738,9 +769,6 @@ ul.bargraph li.c {
   width: 20%;
 }
 
-ul.bargraph li.php {
-  width: 12%;
-}
 
 ul.bargraph li.swift {
   width: 20%;
@@ -752,6 +780,8 @@ ul.bargraph li.javascript {
 
 #skills-charts {
   width: 100%;
+  font-size: 80%;
+  font-family: 'Inconsolata';
 }
 
 ul.bargraph li.loc {

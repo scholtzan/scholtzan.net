@@ -13,22 +13,18 @@
       <h2 id="edu">Education</h2>
 
       <div class="wrapper">
-        <div class="timeline">
-          {{ range $index, $page := where .Data.Pages "Type" "education" }}
-              {{ partial "timeline-entry" (dict "content" $page) }}
-          {{ end }}
-        </div>
+        {{ range $index, $page := where .Data.Pages "Type" "education" }}
+            {{ partial "experience-entry" (dict "content" $page) }}
+        {{ end }}
       </div>
 
 
-      <h2 id="work"> Work Experience</h2>
+      <h2 id="work">Work Experience</h2>
 
       <div class="wrapper">
-        <div class="timeline">
-          {{ range $index, $page := where .Data.Pages "Type" "work" }}
-              {{ partial "timeline-entry" (dict "content" $page) }}
-          {{ end }}
-        </div>
+        {{ range $index, $page := where .Data.Pages "Type" "work" }}
+            {{ partial "experience-entry" (dict "content" $page) }}
+        {{ end }}
       </div>
 
 
@@ -37,7 +33,7 @@
 
       <div class="wrapper volunteering-wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "volunteering" }}
-            {{ partial "entry" (dict "content" $page) }}
+            {{ partial "experience-entry" (dict "content" $page) }}
         {{ end }}
       </div>
 
@@ -46,7 +42,7 @@
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "competition" }}
-            {{ partial "entry" (dict "content" $page) }}
+            {{ partial "experience-entry" (dict "content" $page) }}
         {{ end }}
       </div>
 
@@ -56,7 +52,7 @@
       <div class="wrapper">
         <div class="date-entries">
           {{ range $index, $page := where .Data.Pages "Type" "award" }}
-              {{ partial "date-entry" (dict "content" $page) }}
+              {{ partial "experience-entry" (dict "content" $page) }}
           {{ end }}
         </div>
       </div>
@@ -76,7 +72,7 @@
 
       <div class="wrapper">
         {{ range $index, $page := where .Data.Pages "Type" "project" }}
-            {{ partial "entry" (dict "content" $page) }}
+            {{ partial "experience-entry" (dict "content" $page) }}
         {{ end }}
       </div>
 

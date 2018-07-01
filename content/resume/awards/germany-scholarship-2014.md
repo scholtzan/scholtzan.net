@@ -6,4 +6,3 @@ type = "award"
 weight = -9
 +++
 
-* Sponsored by [Gesellschaft der Freunde der TU Chemnitz e.V.](https://www.tu-chemnitz.de/tu/freunde/)

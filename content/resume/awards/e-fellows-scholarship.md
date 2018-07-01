@@ -6,4 +6,3 @@ type = "award"
 weight = -6
 +++
 
-* As award for excellent educational achievements
