@@ -436,6 +436,7 @@ footer .copyright {
 .post-preview {
   padding: 15px;
   border-bottom: 1px solid #eee;
+  text-align: justify;
 }
 
 .post-preview:last-child {
