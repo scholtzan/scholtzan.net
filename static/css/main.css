@@ -53,7 +53,7 @@ ul {
   list-style-type: square;
   padding: 0;
   margin: 0;
-  margin-left: 1.3em; 
+  margin-left: 1.3em;
 }
 
 
@@ -101,6 +101,9 @@ hr.small {
 
 img {
   max-width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .profile {
@@ -675,7 +678,7 @@ table tr td :last-child {
   float: right;
   min-width: 8em;
   text-align: right;
-  padding-right: 10px; 
+  padding-right: 10px;
 }
 
 .timeline-block {
