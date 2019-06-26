@@ -16,10 +16,10 @@ builddrafts = false
     url = "/blog/"
  
 [[menu.main]]
-    name = "resume"
+    name = "about"
     weight = -2
-    identifier = "resume"
-    url = "/resume/"
+    identifier = "about"
+    url = "/about/"
 
 [[menu.main]]
     name = "travels"

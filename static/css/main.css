@@ -110,7 +110,24 @@ img {
   font-weight: 300;
   margin-top: 3ex;
   font-size: 200%;
+  text-align: center;
 }
+
+.large-links {
+  margin-top: 2ex;
+}
+
+.large-links li a {
+  color: #404040;
+}
+
+.large-links:hover,
+.large-links:focus ,
+.large-links li a:hover,
+.large-links li a:focus {
+  color: #0869d8;
+}
+
 
 .site-link {
   font-size: 140%;
