@@ -5,11 +5,11 @@ type = "post"
 tags = ["BigQuery", "Python", "Mozilla", "Open Source"]
 +++
 
-BigQuery supports user-defined functions written in JavaScript and by using WebAssembly it is [even possible to run C code](https://blog.sourced.tech/post/calling-c-functions-from-bigquery/). While having support for C is quite neat a more widely used language when it comes to data analysis and processing is Python with its scientific library ecosystem making the lifes of data scientists much easier. So, wouldn't it be cool to bring Python into BigQuery? That was the motivation behind my internship project at Mozilla.
+BigQuery supports user-defined functions written in JavaScript and by using WebAssembly it is [even possible to run C code](https://blog.sourced.tech/post/calling-c-functions-from-bigquery/). While having support for C is quite neat a more widely used language when it comes to data analysis and processing is Python with its scientific library ecosystem making the lives of data scientists much easier. So, wouldn't it be cool to bring Python into BigQuery? That was the motivation behind my internship project at Mozilla.
 
 ## Pyodide and BigQuery Limitations
 
-Starting out with this project, the initial idea was to use [Pyodide](https://github.com/iodide-project/pyodide) which is the Python stack compiled to WebAssembly including various scientific libraries, such as NumPy or Pandas. Pyodide runs in the web browser and is used as part of [Iodide](https://alpha.iodide.io/), a tool to write interactive documents using web technologies. However, after some testing and playing around it became clear that BigQuery has various limitations related to UDFs that make using Pyodide not possible:
+Starting out with this project, the initial idea was to use [Pyodide](https://github.com/iodide-project/pyodide) which is the Python stack compiled to WebAssembly including various scientific libraries, such as NumPy and Pandas. Pyodide runs in the web browser and is used as part of [Iodide](https://alpha.iodide.io/), a tool to write interactive documents using web technologies. However, after some testing and playing around it became clear that BigQuery has various limitations related to UDFs that make using Pyodide impossible:
 
 * The maximum inline code blob size is 32 KB.
 * External code files can only have a size of up to 1 MB.
@@ -18,6 +18,7 @@ Starting out with this project, the initial idea was to use [Pyodide](https://gi
 * Only about 40 MB of memory is available for JavaScript processing environment.
 * The JavaScript environment does not support `async` in Standard SQL and does not support certain other functions for loading external resources, such as `require` or `fetch`.
 
+While some of these limitations [are documented](https://cloud.google.com/bigquery/docs/reference/standard-sql/user-defined-functions#limitations), others had to be determined empirically. The Pyodide WebAssembly and JavaScript files without any libraries are already more than 12 MB of size and would be too large, even if they could be split up into separate smaller files. 
 
 ## MicroPython
 
@@ -32,9 +33,9 @@ var myModule = new WebAssembly.Module(bytes);
 var myInstance = new WebAssembly.Instance(myModule, importObject);
 ``` 
 
-The JavaScript port of MicroPython results in `micropython.js`, which contains JavaScript methods that can be called from BigQuery and `framework.wasm` which contains the MicroPython logic as WebAssembly. To initialize the MicroPython WebAssembly, I decided to write the bytes of `framework.wasm` into a byte array stored in a JavaScript file. This byte array is then accessed in `micropython.js`. It turned out that the size of the byte array exceeded the limit of 1 MB for external code files, so the byte array ended up to be split across multiple files, `part0.js` and `part1.js`, which are concatenated together in `micropython.js` and then used for initializing the MicroPython WebAssembly. 
+The JavaScript port of MicroPython results in `micropython.js`, which contains JavaScript methods that can be called from BigQuery and `framework.wasm` which contains the MicroPython logic as WebAssembly. To initialize the MicroPython WebAssembly, I decided to write the bytes of `framework.wasm` into a byte array stored in a JavaScript file. This byte array is then accessed in `micropython.js`. It turned out that the size of the byte array exceeded the limit of 1 MB for external code files, so the byte array ended up having to be split across multiple files, `part0.js` and `part1.js`, which are concatenated together in `micropython.js` and then used for initializing the MicroPython WebAssembly. 
 
-The following code shows how an exemplary UDF that uses Micropython could look like:
+The following code shows what a UDF that uses Micropython could look like:
 
 
 ```sql
