@@ -62,22 +62,291 @@ It is also noteworthy that individual Spotify devices are instantiated as a `Lig
 
 ## Platform Plugin - `SpotifyPlatform`
 
-The platform plugin is written in Rust in `src/spotify_platform.rs`. 
+The platform plugin is written in Rust in `src/spotify_platform.rs`. At the top of the file, Homebridge API function used for registering plugin accessories and configuring the plugin are imported as well as the [`setInterval()`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) method which is used for checking for new Spotify devices periodically.
 
+The `configureAccessory()` method is invoked whenever Homebridge tries to restore accessories that are cached in `~/.homebridge/accessories/cachedAccessories`. Restoring happens, for example, after restarting Homebridge. The plugin will determine these cached accessories and remove them once the plugin has been initialized. This ensures that Spotify devices that are no longer available do not get registered as accessories.
+
+To ensure Spotify device accessories are as up-to-date as possible, `setInterval` is used to periodically call the `refresh_devices` function. This function defines a closure that will retrieve all active Spotify devices from the Spotify API, store them and remove those that are no longer available.
+
+```rust
+fn refresh_devices(&mut self) {
+    // [...]
+    let refresh_closure = Closure::wrap(Box::new(move || {
+        spawn_local(async move {
+            // [...]
+            // make API request
+            let available_devices: SpotifyDevices =
+                match JsFuture::from(api.get_devices()).await {
+                    Ok(state) => state.into_serde().unwrap(),
+                    Err(_) => SpotifyDevices {
+                        devices: Vec::new(),
+                    },
+                };
+
+            // check if devices still exist
+            devices.borrow_mut().retain(|registered_device| {
+                if !available_devices
+                    .devices
+                    .iter()
+                    .any(|d| &d.id == registered_device.get_device_id())
+                {
+                    // Array.of()
+                    let accessories =
+                        PlatformAccessories::of(registered_device.get_accessory());
+
+                    homebridge.unregister_platform_accessories(
+                        PLUGIN_IDENTIFIER,
+                        PLATFORM_NAME,
+                        accessories,
+                    );
+
+                    return false;
+                }
+                true
+            });
+
+            // check if device already exists, otherwise add
+            for available_device in available_devices.devices {
+                if !devices
+                    .borrow()
+                    .iter()
+                    .any(|d| d.get_device_id() == &available_device.id)
+                {
+                    let accessory = SpotifyAccessory::new(
+                        available_device.name,
+                        available_device.id,
+                        api.clone(),
+                    );
+
+                    // Array.of()
+                    let accessories = PlatformAccessories::of(accessory.get_accessory());
+
+                    homebridge.register_platform_accessories(
+                        PLUGIN_IDENTIFIER,
+                        PLATFORM_NAME,
+                        accessories.clone(),
+                    );
+
+                    devices.borrow_mut().push(accessory);
+                }
+            }
+            // [...]
+        });
+    }) as Box<dyn FnMut()>);
+
+    // define setInterval()
+    let _ = set_interval(
+        refresh_closure.as_ref().unchecked_ref(),
+        self.config.refresh_rate.unwrap_or(REFRESH_RATE),
+    );
+    refresh_closure.forget();
+}
+```
+*`src/spotify_platform.rs` `refresh_devices()` excerpt*
+
+The Homebridge API function [`registerPlatformAccessories()`](https://developers.homebridge.io/#/api/platform-plugins#apiregisterplatformaccessories) for registering new accessories and [`unregisterPlatformAccessories()`](https://developers.homebridge.io/#/api/platform-plugins#apiunregisterplatformaccessories) for unregistering accessories expects a list of accessories as parameter. However, currently `wasm-bindgen` [does not support returning `Vec<T>` or having parameters of type `Vec<T>`](https://github.com/rustwasm/wasm-bindgen/issues/111). So, importing `registerPlatformAccessories()` as
+
+```rust
+    #[wasm_bindgen(method, js_name = registerPlatformAccessories)]
+    fn register_platform_accessories(
+        this: &Homebridge,
+        plugin_identifier: &str,
+        platform_name: &str,
+        accessories: Vec<SpotifyAccessory>,     // not supported
+    );
+```
+
+was not an option. Also, using [`js_sys::Array`](https://rustwasm.github.io/wasm-bindgen/api/js_sys/struct.Array.html) as parameter type did not work, because array elements get converted to `JsValue`s.
+
+The workaround I ended up doing was to import the JavaScript `Array` type and its constructor under a different name and use this one instead for creating an array of `SpotifyAccessory`s:
+
+```rust
+    #[derive(Clone, Debug)]
+    #[wasm_bindgen(js_name = Array)]
+    pub type PlatformAccessories;
+
+    #[wasm_bindgen(constructor, js_class = "Array")]
+    fn of(accessory: &Accessory) -> PlatformAccessories;
+
+    #[wasm_bindgen(method, js_name = registerPlatformAccessories)]
+    fn register_platform_accessories(
+        this: &Homebridge,
+        plugin_identifier: &str,
+        platform_name: &str,
+        accessories: PlatformAccessories,
+    );
+```
 
 ## Platform Accessories - `SpotifyAccessory`
+
+Each available Spotify device is represented as a `SpotifyAccessory` which is defined in `src/spotify_accessory.rs`. Similarly to `spotify_platform.rs`, first all JavaScript function that are used at some point are imported. When a new accessory gets instantiated, first a new Homebridge service is created using the `createSwitch()` function that is defined in `index.js` and invoked here. Next, characteristics, such as `On` for starting and stopping Spotify playback and `Brightness` for changing the volume, are assigned to the service. Also, a name gets assigned that corresponds to the name of the Spotify device.
+
+```rust
+fn apply_characteristics(&self) {
+    let get_on = self.get_on();
+    let set_on = self.set_on();
+
+    self.service
+        .get_characteristic("On")
+        .on("set", set_on.as_ref().unchecked_ref())
+        .on("get", get_on.as_ref().unchecked_ref());
+
+    let get_volume = self.get_volume();
+    let set_volume = self.set_volume();
+
+    self.service
+        .get_characteristic("Brightness")
+        .on("set", set_volume.as_ref().unchecked_ref())
+        .on("get", get_volume.as_ref().unchecked_ref());
+
+    self.service
+        .get_characteristic("Name")
+        .set_value(&self.name);
+
+    get_on.forget();
+    set_on.forget();
+    set_volume.forget();
+    get_volume.forget();
+}
+```
+*Defining accessory characteristics*
+
+The methods invoked when switching the accessory on or off or when changing the volume are defined as closures: 
+
+``` rust
+fn set_on(&self) -> Closure<dyn FnMut(bool, Function)> {
+    let api = Rc::clone(&self.api);
+    let device_id = self.device_id.clone();
+
+    Closure::wrap(Box::new(move |new_on: bool, callback: Function| {
+        if new_on {
+            let _ = api.play(&device_id);
+        } else {
+            let _ = api.pause(&device_id);
+        }
+
+        callback
+            .apply(
+                &JsValue::null(),
+                &Array::of2(&JsValue::null(), &JsValue::from(new_on)),
+            )
+            .unwrap();
+    }) as Box<dyn FnMut(bool, Function)>)
+}
+```
+*Closure for starting/pausing Spotify that is part of `SpotifyAccessory`*
+
+Each of these methods make requests to the Spotify API and use `SpotifyApi` for this.
 
 
 ## Making Requests to the Spotify API - `SpotifyApi`
 
+`SpotifyApi` is defined in `src/spotify_api.rs` and contains methods for making requests to the [Spotify API](https://developer.spotify.com/documentation/web-api/). For executing HTTP requests, [node-fetch](https://github.com/node-fetch/node-fetch) is used. It also needs to be installed in order for the plugin to run. `src/node_fetch.rs` defines a `fetch` method which is used to issue requests using node-fetch and to return API responses to the caller as JSON.
+
+To access private information through the Spotify Web API and to control the music playback, the plugin needs to be authorized via the [Spotify Accounds service](https://accounts.spotify.com/). This also requires for users to have a Spotify Premium account and makes the plugin installation and configuration a bit more complicated. Users have to generate a client ID and client secret that needs to be provided in the plugin configuration file. These credentials are used in `authorize()` to authenticate to the Spotify API every time a request is made. `authorize()` returns an access token which needs to be included as bearer token for every request.
+
+`SpotifyApi` provides separate functions for each request. All of them look quite similar:
+
+```rust
+pub fn get_devices(&self) -> Promise {
+    let authorize_request = self.authorize();
+
+    future_to_promise(async move {
+        match JsFuture::from(authorize_request).await {
+            Ok(authorize_request) => {
+                let access_token: String = authorize_request.as_string().unwrap();
+                let url = "https://api.spotify.com/v1/me/player/devices";
+
+                let authorization_header = format!("Bearer {}", access_token);
+                let mut headers = HashMap::new();
+                headers.insert("Authorization".to_owned(), authorization_header);
+
+                match fetch(url, FetchMethod::Get, "", headers, false).await {
+                    Err(e) => {
+                        console::log_1(&format!("Error getting devices: {:?}", e).into())
+                    }
+                    Ok(result) => {
+                        return Ok(result);
+                    }
+                }
+            }
+            Err(e) => console::log_1(
+                &format!("Error while authenticating to Spotify API: {:?}", e).into(),
+            ),
+        }
+
+        Ok(JsValue::null())
+    })
+}
+```
+*Function requesting available Spotify devices.*
 
 ## Configuring the Plugin
 
+To configure the plugin and to make it run in Homebridge, it needs to be registered as app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/login) where the following steps need to be executed:
++ Select "Create a client ID"
++ Provide a name and description in the pop-up; click "Next"
++ Copy the "Client ID" and "Client Secret" which will be required in the following configuration step
++ Click "Edit Settings"
++ Add `http://localhost/callback` as "Redirect URI" and save
+
+Next, the plugin configuration needs to be generated. The `generate_config` script can be used to create this configuration. It requires for the client_id, client_secret and Spotify username to be set since those are required to authenticate to the Spotify Web API. Running the script will open a web browser asking to authenticate to Spotify which is required to retrieve the `refresh_token`.
+
+```bash
+$ ./generate_config --help
+usage: generate_config [-h] [--client_id CLIENT_ID]
+                       [--client_secret CLIENT_SECRET]
+                       [--redirect_uri REDIRECT_URI] [--username USERNAME]
+
+Script to retrieve an access and refresh token for using the Spotify API
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --client_id CLIENT_ID, --client-id CLIENT_ID
+                        Spotify client ID
+  --client_secret CLIENT_SECRET, --client-secret CLIENT_SECRET
+                        Spotify client secret
+  --redirect_uri REDIRECT_URI, --redirect-uri REDIRECT_URI
+                        Redirect URI
+  --username USERNAME   Spotify username
+
+
+$ ./generate_config --client_id=<client_id> --client_secret=<client_secret> --username=<username>
+  {
+    "platform": "Spotify",
+    "name": "Spotify",
+    "client_id": "<client_id>",
+    "client_secret": "<client_secret>",
+    "refresh_token": "<refresh_token>"
+  }
+```
+
+The generated config needs to copied to the Homebridge config file (e.g. `~/.homebridge/config.json`).
 
 ## Building, Publishing and Installing the Plugin
 
+For building the plugin, the `Makefile` can simply be executed which performs the following steps:
 
-## Issues and Future Work
+```Makefile
+build:
+    wasm-pack build --target nodejs
+    cp package.json pkg/package.json
+    cp index.js pkg/index.js
+    cp generate_config pkg/generate_config
+```
+
+All files required to be part of the plugin Node package are copied to `pkg/`. 
+
+To publish the package to [npm](https://www.npmjs.com/), [`wasm-pack`](https://github.com/rustwasm/wasm-pack) is used by simply running `wasm-pack publish `.
+
+The plugin can be installed to be used by Homebridge by running `sudo npm install -g homebridge-rusty-spotify`.
+
+## Issues, Future Work and Final Thoughts
+
+
+
+
+
 
 
 * Homebridge, plugins
