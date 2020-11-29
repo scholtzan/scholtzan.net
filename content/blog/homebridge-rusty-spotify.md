@@ -1,6 +1,6 @@
 +++
 title = "Writing Homebridge plugins in Rust"
-date = "2019-11-27"
+date = "2020-11-29"
 type = "post"
 tags = ["Rust", "WebAssembly", "Homebridge", "Spotify", "Open Source"]
 +++
@@ -16,12 +16,12 @@ The short answer is: Yes, it is possible. Although there were a lot of challenge
 The project setup for the Spotify plugin is very similar to the typical Rust project setup:
 * `Cargo.toml` contains metadata and dependencies. A `[lib]` annotation needs to be added to specify `crate-type = ["cdylib"]`. This signifies that a `.wasm` file should be generated. [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) needs to be added as dependency to allow importing JavaScript code and exporting Rust code. Additionally, [`wasm-bindgen-futures`](https://rustwasm.github.io/wasm-bindgen/api/wasm_bindgen_futures/) is required to convert between JavaScript `Promise`s and Rust `Future`s. This is necessary when making requests to the Spotify REST API and processing responses in Rust. The [`web-sys`](https://rustwasm.github.io/wasm-bindgen/web-sys/index.html#the-web-sys-crate) crate imports raw binding for the Web's API and the [`js-sys`](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys) crate imports raw bindings to global JavaScript APIs.
 * `src/lib.rs` as the crate root.
-* `index.js` as the Node.js entrypoint for the plugin.
+* `index.js` as the Node.js entry point for the plugin.
 * `package.json` specifies `homebridge` and `npm` as `engines` and `node-fetch` as dependency required for making HTTP requests to the Spotify API.
 
 ## Registering the Plugin
 
-The `index.js` file serves as the plugin entrypoint. Here, the generated JavaScript `homebridge_rusty_spotify.js` is imported and exposes `SpotifyPlatform` which contains the platform plugin core logic that is written in Rust and compiled to WebAssembly. 
+The `index.js` file serves as the plugin entry point. Here, the generated JavaScript `homebridge_rusty_spotify.js` is imported and exposes `SpotifyPlatform` which contains the platform plugin core logic that is written in Rust and compiled to WebAssembly. 
 
 ```javascript
 // import generated WebAssembly
@@ -53,16 +53,16 @@ module.exports = function(homebridge) {
 ```
 *`index.js`*
 
-A few Homebridge specific types, such as `Accessory`, `Service`, `UUIDGen` and `Characteristic` need to be exported in order for them to be imported and used in Rust. `createSwitch` needed to be provided to initialize a new `Lightbulb` service which represents a Spotify device accessory. This was necessary as a work around since nested JavaScript classes are not supported with `wasm-bindgen` at the moment. 
+A few Homebridge specific types, such as `Accessory`, `Service`, `UUIDGen` and `Characteristic` need to be exported for them to be imported and used in Rust. `createSwitch` needed to be provided to initialize a new `Lightbulb` service which represents a Spotify device accessory. This was necessary as a workaround since nested JavaScript classes are not supported with `wasm-bindgen` at the moment. 
 
-It is also noteworthy that individual Spotify devices are instantiated as a `Lightbulb` accessory and not as, for example, a `Speaker` accessory. When trying to change the accessory type to `Speaker`, HomeKit issues a warning: _"This accessory is not certified and may not work reliably with HomeKit"_ and the accessory becomes unresponsive. The `Lightbulb` accessory type also has the advantage the a `Brightness` characteristic can be added which can be used to control the playback volume on the device.
+It is also noteworthy that individual Spotify devices are instantiated as a `Lightbulb` accessory and not as, for example, a `Speaker` accessory. When trying to change the accessory type to `Speaker`, HomeKit issues a warning: _"This accessory is not certified and may not work reliably with HomeKit"_ and the accessory becomes unresponsive. The `Lightbulb` accessory type also has the advantage that a `Brightness` characteristic can be added which can be used to control the playback volume on the device.
 
 `SpotifyPlatform` is a class that is written in Rust and compiled to WebAssembly. It has an additional `homebridge` parameter which is used to interface with the Homebridge API. `SpotifyPlatform` needs to be partially applied to pass `homebridge` as a parameter and then use the partially applied class constructor when registering the platform plugin to Homebridge using [`registerPlatform`](https://developers.homebridge.io/#/api/platform-plugins#apiregisterplatform).
 
 
 ## Platform Plugin - `SpotifyPlatform`
 
-The platform plugin is written in Rust in `src/spotify_platform.rs`. At the top of the file, Homebridge API function used for registering plugin accessories and configuring the plugin are imported as well as the [`setInterval()`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) method which is used for checking for new Spotify devices periodically.
+The platform plugin is written in Rust in `src/spotify_platform.rs`. At the top of the file, Homebridge API function used for registering plugin accessories and configuring plugins are imported as well as the [`setInterval()`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) method which is used for checking for new Spotify devices periodically.
 
 The `configureAccessory()` method is invoked whenever Homebridge tries to restore accessories that are cached in `~/.homebridge/accessories/cachedAccessories`. Restoring happens, for example, after restarting Homebridge. The plugin will determine these cached accessories and remove them once the plugin has been initialized. This ensures that Spotify devices that are no longer available do not get registered as accessories.
 
@@ -144,7 +144,7 @@ fn refresh_devices(&mut self) {
 ```
 *`src/spotify_platform.rs` `refresh_devices()` excerpt*
 
-The Homebridge API function [`registerPlatformAccessories()`](https://developers.homebridge.io/#/api/platform-plugins#apiregisterplatformaccessories) for registering new accessories and [`unregisterPlatformAccessories()`](https://developers.homebridge.io/#/api/platform-plugins#apiunregisterplatformaccessories) for unregistering accessories expects a list of accessories as parameter. However, currently `wasm-bindgen` [does not support returning `Vec<T>` or having parameters of type `Vec<T>`](https://github.com/rustwasm/wasm-bindgen/issues/111). So, importing `registerPlatformAccessories()` as
+The Homebridge API function [`registerPlatformAccessories()`](https://developers.homebridge.io/#/api/platform-plugins#apiregisterplatformaccessories) for registering new accessories and [`unregisterPlatformAccessories()`](https://developers.homebridge.io/#/api/platform-plugins#apiunregisterplatformaccessories) for unregistering accessories expects a list of accessories as parameter. However, currently `wasm-bindgen` [does not support returning `Vec<T>` or having parameters of type `Vec<T>`](https://github.com/rustwasm/wasm-bindgen/issues/111). So, importing `registerPlatformAccessories()` as was not an option:
 
 ```rust
     #[wasm_bindgen(method, js_name = registerPlatformAccessories)]
@@ -156,7 +156,7 @@ The Homebridge API function [`registerPlatformAccessories()`](https://developers
     );
 ```
 
-was not an option. Also, using [`js_sys::Array`](https://rustwasm.github.io/wasm-bindgen/api/js_sys/struct.Array.html) as parameter type did not work, because array elements get converted to `JsValue`s.
+Also, using [`js_sys::Array`](https://rustwasm.github.io/wasm-bindgen/api/js_sys/struct.Array.html) as parameter type did not work, because array elements get converted to `JsValue`s.
 
 The workaround I ended up doing was to import the JavaScript `Array` type and its constructor under a different name and use this one instead for creating an array of `SpotifyAccessory`s:
 
@@ -241,9 +241,9 @@ Each of these methods make requests to the Spotify API and use `SpotifyApi` for 
 
 ## Making Requests to the Spotify API - `SpotifyApi`
 
-`SpotifyApi` is defined in `src/spotify_api.rs` and contains methods for making requests to the [Spotify API](https://developer.spotify.com/documentation/web-api/). For executing HTTP requests, [node-fetch](https://github.com/node-fetch/node-fetch) is used. It also needs to be installed in order for the plugin to run. `src/node_fetch.rs` defines a `fetch` method which is used to issue requests using node-fetch and to return API responses to the caller as JSON.
+`SpotifyApi` is defined in `src/spotify_api.rs` and contains methods for making requests to the [Spotify API](https://developer.spotify.com/documentation/web-api/). For executing HTTP requests, [node-fetch](https://github.com/node-fetch/node-fetch) is used. It also needs to be installed for the plugin to run. `src/node_fetch.rs` defines a `fetch` method which is used to issue requests using node-fetch and to return API responses to the caller as JSON.
 
-To access private information through the Spotify Web API and to control the music playback, the plugin needs to be authorized via the [Spotify Accounds service](https://accounts.spotify.com/). This also requires for users to have a Spotify Premium account and makes the plugin installation and configuration a bit more complicated. Users have to generate a client ID and client secret that needs to be provided in the plugin configuration file. These credentials are used in `authorize()` to authenticate to the Spotify API every time a request is made. `authorize()` returns an access token which needs to be included as bearer token for every request.
+To access private information through the Spotify Web API and to control the music playback, the plugin needs to be authorized via the [Spotify Accounts service](https://accounts.spotify.com/). This also requires users to have a Spotify Premium account and makes the plugin installation and configuration a bit more complicated. Users have to generate a client ID and client secret that needs to be provided in the plugin configuration file. These credentials are used in `authorize()` to authenticate to the Spotify API every time a request is made. `authorize()` returns an access token which needs to be included as bearer token for every request.
 
 `SpotifyApi` provides separate functions for each request. All of them look quite similar:
 
@@ -283,7 +283,7 @@ pub fn get_devices(&self) -> Promise {
 
 ## Configuring the Plugin
 
-To configure the plugin and to make it run in Homebridge, it needs to be registered as app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/login) where the following steps need to be executed:
+To configure the plugin and to make it run in Homebridge, it needs to be registered as an app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/login) where the following steps need to be executed:
 + Select "Create a client ID"
 + Provide a name and description in the pop-up; click "Next"
 + Copy the "Client ID" and "Client Secret" which will be required in the following configuration step
@@ -298,7 +298,7 @@ usage: generate_config [-h] [--client_id CLIENT_ID]
                        [--client_secret CLIENT_SECRET]
                        [--redirect_uri REDIRECT_URI] [--username USERNAME]
 
-Script to retrieve an access and refresh token for using the Spotify API
+Script to retrieve the access and refresh token for using the Spotify API
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -321,7 +321,7 @@ $ ./generate_config --client_id=<client_id> --client_secret=<client_secret> --us
   }
 ```
 
-The generated config needs to copied to the Homebridge config file (e.g. `~/.homebridge/config.json`).
+The generated config needs to be copied to the Homebridge config file (e.g. `~/.homebridge/config.json`).
 
 ## Building, Publishing and Installing the Plugin
 
@@ -343,6 +343,6 @@ The plugin can be installed to be used by Homebridge by running `sudo npm instal
 
 ## Issues, Future Work and Final Thoughts
 
-Originally, I wanted to have a Spotify plugin so that I can setup an alarm in the morning that consisted of playing some music on Spotify using the iOS Home app. However, when I started writing this plugin I noticed that Spotify devices become inactive after a while or in the case of iPhone and iPad Spotify devices they become inactive when the app is closed. So, over night all Spotify devices get disconnected and none are available in the morning anymore. I have some future ideas of setting up a Spotify client that does not get disconnected and stays active at all times, however this is not an issue that Homebridge or a plugin can solve.
+Originally, I wanted to have a Spotify plugin so that I can set up an alarm in the morning that consisted of playing some music on Spotify using the iOS Home app. However, when I started writing this plugin I noticed that Spotify devices become inactive after a while or in the case of iPhone and iPad Spotify devices they become inactive when the app is closed. So, overnight all Spotify devices get disconnected and none are available in the morning anymore. I have some future ideas of setting up a Spotify client that does not get disconnected and stays active at all times, however, this is not an issue that Homebridge or a plugin can solve.
 
 So while the plugin does not solve my initial use case yet, it does show that it is possible to write Homebridge plugins using Rust. Although I had to resort to a few workarounds which also resulted in developing the plugin taking much longer than if I had just used JavaScript or TypeScript, I am quite pleased with the outcome and did learn a lot in the process of writing. And it is also satisfying to see that other people are interested in using the plugin. 
