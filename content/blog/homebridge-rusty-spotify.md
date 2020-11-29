@@ -343,29 +343,6 @@ The plugin can be installed to be used by Homebridge by running `sudo npm instal
 
 ## Issues, Future Work and Final Thoughts
 
+Originally, I wanted to have a Spotify plugin so that I can setup an alarm in the morning that consisted of playing some music on Spotify using the iOS Home app. However, when I started writing this plugin I noticed that Spotify devices become inactive after a while or in the case of iPhone and iPad Spotify devices they become inactive when the app is closed. So, over night all Spotify devices get disconnected and none are available in the morning anymore. I have some future ideas of setting up a Spotify client that does not get disconnected and stays active at all times, however this is not an issue that Homebridge or a plugin can solve.
 
-
-
-
-
-
-* Homebridge, plugins
-    * Homebridge server also written in Node.js
-* Spotify
-* why rust
-    * rust wasm
-
-* registering the plugin
-    * JavaScript
-* registering accessories
-    * Arrays
-* service and characteristics
-    * callbacks
-* API to make Spotify requests
-* Configuration Spotify
-
-* future work, things that don't quite work
-* devices disconnecting when inactive
-
-* building the plugin
-    * installing
+So while the plugin does not solve my initial use case yet, it does show that it is possible to write Homebridge plugins using Rust. Although I had to resort to a few workarounds which also resulted in developing the plugin taking much longer than if I had just used JavaScript or TypeScript, I am quite pleased with the outcome and did learn a lot in the process of writing. And it is also satisfying to see that other people are interested in using the plugin. 
