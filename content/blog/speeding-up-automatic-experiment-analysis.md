@@ -123,7 +123,7 @@ spec:
     activeDeadlineSeconds: 600   # terminate container template after 10 minutes
 ```
 
-When jetstream runs the daily analyses, it fetches all active experiments from Experimenter and injects these experiments as `parameter` into the workflow spec. Each experiment has a unique slug and a date for which data should be processed. Additionally, the GCP project name and destination dataset in BigQuery where data should be written to need to be specified as `parameter`s. 
+When jetstream runs its daily analyses, it fetches all active experiments from Experimenter and injects these experiments as `parameter` into the workflow spec. Each experiment is a tuple consisting of a unique experiment identifier (slug) and a date for which data should be processed. The GCP project name and destination dataset in BigQuery where data should be written to need to be specified as `parameter`s as well. 
 
 The workflow spec defines two steps that are executed for each experiment and date: `analyse-experiment` and `export-statistics`. In the `analyse-experiment` metrics and statistics are calculated and written to BigQuery. `export-statistics` exports all statistics data that has been written to BigQuery as JSON to GCS to make it available to our dashboard tools. Running these steps for each experiment will be done in parallel. Jetstream provides an entrypoint script that allows to specify what the Jetstream container should execute. The `run` and `export-statistics-to-json` are used by the steps defined in the spec.
 
@@ -131,30 +131,32 @@ Up to 5 experiment analyses will get executed in parallel. This is to ensure ava
 
 As these workflow parameters might change between runs, jetstream injects them into the workflow spec right before it submits the workflow to Argo. For submitting workflows to Argo, we use the [`argo-client-python`](https://github.com/argoproj-labs/argo-client-python) library. 
 
-In addition to daily analysis runs, jetstream also needed to support running analyses on-demand. When a config in jetstream-config changes or a new one is added, all analyses of the affected experiment since the time it had been launched need to be re-executed. The defined workflow also supports this use case. Instead of having a list of different experiments with the same analysis as `parameter`, it will inject a list of the 
+In addition to daily analysis runs, jetstream also needed to support running analyses on-demand. When a config in [jetstream-config](https://github.com/mozilla/jetstream-config) changes or a new one is added, all analyses of the affected experiment since the time it had been launched need to be re-executed. The defined workflow also supports this use case. Instead of having a list of tuples consisting of different experiment slugs with the same analysis as `parameter`, it will inject a list of tuples with the experiment slug of the targeted experiment and dates ranging from the start of the experiment until the current date or the end of the experiment.
 
-[ toot]tuple slug date
+Argo provides a neat dashboard for monitoring workflows which is also very useful for debugging. Accessing the dashboard locally requires forwarding the port of the pod running the [Argo Server](https://argoproj.github.io/argo/argo-server/): `kubectl port-forward --namespace argo $(kubectl get pod --namespace argo --selector='app=argo-server' --output jsonpath='{.items[0].metadata.name}') 8080:2746`
 
+![Argo Dashboard](/img/argo-dashboard.png)
+*Argo Dashboard.*
 
+For each workflow, live status of its job is available with additional information about job parameters, duration and resource usages. For each jobs, logs can be directly accessed through the dashboard.
 
+![Argo Dashboard Workflow](/img/argo-dashboard-workflow.png)
+*Workflow in the Argo Dashboard.*
 
-* solution
-	* setup
-	* Argo
-		* some general information
-		* workflows
-		* python client
-		* benchmmarks
-		* dashboard
-	* Dask
-		* some general information
-		* adding Dask
-			* rewriting without nesting
-			* pickle problems
-		* benchmakrs
-* error handling?
-	* bigquery logging
-* pain points
-	* permissions
-* future work
-	* dask kubernetes
+Using Argo we analyses for days with a large amount of experiments to process were about 2x-3x faster than before. We are still tweaking configuration parameters, such as the number of pods running in parallel, to reduce the runtime even further.
+
+## Parallelizing lower-level calculations using Dask
+
+Besides running analyses in parallel, the steps executed during analysis for each experiment also consisted of tasks that could be parallelized. Jetstream calculates for each analysis period (daily, weekly, and overall) a defined set of statistics for a set of segments. To parallelize these lower-level calculations, we decided to use the [Dask](https://dask.org/) Python library. Dask allows to represent complex application logic as tasks in a graph that are executed in parallel on multiple cores.
+
+The [dask.delayed](https://docs.dask.org/en/latest/delayed.html) interface is used to turn the functions executing these steps into tasks that are added to a task graph which executes these steps in parallel. Dask is configured to use as many cores as are available on the machine by default, with 1 worker for each core. [Multi-threading is being avoided, instead processes are used](https://docs.dask.org/en/latest/scheduling.html#local-threads) since the code is dominated by Python code, otherwise there wouldn't be any speedup due Python's Global Interpreter Lock.
+
+Adding Dask required some changes to Jetstreams initial code base. The main changes consisted of [re-writing the analysis functions without nesting](https://github.com/mozilla/jetstream/pull/311) since nested Dask workflows are not supported and [resolving some pickling errors](https://stackoverflow.com/questions/50888391/pickle-of-object-with-getattr-method-in-python-returns-typeerror-object-no).
+
+Using Dask reduced the runtime by half for some compute-intensive experiments.
+
+## Conclusions
+
+Overall, integrating Argo and Dask in our existing Jetstream codebase did not require us to make a whole lot of changes. Most of the code did not require any changes at all which made the process of of speeding up our automatic experiment analysis infrastructure a fast one. Currently, the analyses complete about 6x faster compared to our original setup.
+
+There is still some room for improvement in finding the best configuration parameters that might result in an even larger speedup. Addiontal speedup could be achieved by using [Dask Kubernetes](https://kubernetes.dask.org/en/latest/) which deploys Dask workers on the cluster instead of just the single pod running the analysis for an experiment. The setup for Dask Kubernetes turned out to be relatively complicated, but it might be something worth investigating if the number of experiments keeps increasing in the future.
