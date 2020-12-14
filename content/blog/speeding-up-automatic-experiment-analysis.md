@@ -1,48 +1,50 @@
 +++
-title = "Speeding up Mozilla's automatic experiment analysis"
-date = "2020-12-04"
+title = "Speeding up Mozilla's automated experiment analysis"
+date = "2020-12-14"
 type = "post"
-tags = ["Mozilla", "Open Source", "Argo", "Python", "Jetstream", "Dask"]
+tags = ["Mozilla", "Open Source", "Argo", "Python", "Jetstream", "Dask", "Experimentation"]
 +++
 
-_This post describes my recent work on [jetstream](https://github.com/mozilla/jetstream) as part of my day job at Mozilla. In particular, I'll describe how [Argo](https://argoproj.github.io/) and [Dask](https://dask.org/) were used to scale up a system that processes data dozens of different [experiments](https://firefox-source-docs.mozilla.org/browser/urlbar/experiments.html#experiments) in Firefox daily and on-demand. This work has been co-developed with my colleague [Tim Smith](https://github.com/tdsmith)._
+_This post describes my recent work on [Jetstream](https://github.com/mozilla/jetstream) as part of my day job at Mozilla. In particular, I'll describe how [Argo](https://argoproj.github.io/) and [Dask](https://dask.org/) were used to scale up a system that processes data of dozens of different Firefox [experiments](https://firefox-source-docs.mozilla.org/browser/urlbar/experiments.html#experiments) daily and on-demand. This work has been co-developed with my colleague [Tim Smith](https://github.com/tdsmith)._
 
-Beginning of 2020 the development of a new experiment analysis infrastructure was launched at Mozilla which should help scaling up the number of experiments done in Firefox and reduce the involvement of data scientists necessary for each experiment.
-The entire infrastructure consists of different components and services, with [jetstream](https://github.com/mozilla/jetstream) being the component that automatically analyses collected telemetry data of clients enrolled in experiments. As the number of experiments started to increase, some of which require processing an extensive amount of data, running the daily automatic analyses started to take very long. In some cases completing the experiment analyses for a single day took over 23 hours. To provide analysis results without significant delay and speed up the entire analysis process, it was time to make some architectural changes and parallelize jetstream's experiment analysis. [Argo](https://argoproj.github.io/) looked perfect for parallelizing the analysis on a higher level and in combination with [Dask](https://dask.org/) for parallelizing lower-level calculations, we were able to significantly reduce the analysis runtime.
+Beginning of 2020 the development of a new experiment analysis infrastructure was launched at Mozilla to help scaling up the number of experiments done in Firefox and reduce the involvement of data scientists necessary for each experiment.
+The entire infrastructure consists of different components and services, with [Jetstream](https://github.com/mozilla/jetstream) being the component that automatically analyses collected telemetry data of clients enrolled in experiments. 
+
+As the number of experiments started to increase, running the daily analyses started to take very long as some experiments require processing an extensive amount of data. In some cases, completing the experiment analyses for a single day took over 23 hours. To provide analysis results without significant delay and speed up the entire analysis process, it was time to make some architectural changes and parallelize Jetstream's experiment analysis. [Argo](https://argoproj.github.io/) turned out to be ideal for parallelizing the analysis on a higher level and in combination with [Dask](https://dask.org/) for parallelizing lower-level calculations, we were able to significantly reduce the analysis runtime.
 
 
-## Background: jetstream
+## Background: Jetstream
 
 ![Jetstream Overview](/img/jetstream-overview.png)
-*Jetstream Overview.*
+*Jetstream overview.*
 
-At Mozilla, experiments are managed by the [Experimenter](https://github.com/mozilla/experimenter) service and delivered to Firefox clients via [Normandy](https://mozilla.github.io/normandy). Product stakeholders and data scientists are interested in how specific metrics, such as the number of hours Firefox has been used or number of searches done, are affected by these experiments. Jetstream is [scheduled in Airflow](https://github.com/mozilla/telemetry-airflow/blob/master/dags/jetstream.py) to calculate metrics and apply statistical treatments to collected experiment [telemetry data](https://docs.telemetry.mozilla.org/tools/guiding_principles.html) for different analysis windows. Our telemetry data as well as all of the generated data artefacts are stored in [BigQuery](https://cloud.google.com/bigquery). 
+At Mozilla, experiments are managed by the [Experimenter](https://github.com/mozilla/experimenter) service and delivered to Firefox clients via [Normandy](https://mozilla.github.io/normandy). Product stakeholders and data scientists are interested in how specific metrics, such as the number of hours Firefox has been used or number of searches done, are affected by these experiments. Jetstream is [scheduled in Airflow](https://github.com/mozilla/telemetry-airflow/blob/master/dags/jetstream.py) to calculate specific metrics and apply statistical treatments to collected experiment [telemetry data](https://docs.telemetry.mozilla.org/tools/guiding_principles.html) for different analysis windows. Our telemetry data as well as all of the generated data artefacts are stored in [BigQuery](https://cloud.google.com/bigquery). 
 
-The generated data artefacts are visualized in dashboards that allow stakeholders to see results and changes. Data scientists have direct access to the datasets generated by jetstream to allow for custom analysis. For calculating metrics and [statistics](https://github.com/mozilla/jetstream/wiki/Statistics) jetstream uses the [mozanalysis library](https://github.com/mozilla/mozanalysis) Python library.
-While there are a few [pre-defined metrics and statistics](https://github.com/mozilla/jetstream/tree/main/jetstream/config) that are calculated for every experiment, it is also possible to provide custom configurations with additional metrics and statistics. These configurations are stored in the [jetstream-config repository](https://github.com/mozilla/jetstream-config) and automatically detected and applied by jetstream. A more detailed architectural overview of jetstream and how it fits in the experiment analysis infrastructure is available in the [repository Wiki](https://github.com/mozilla/jetstream/wiki/Architecture).
+The generated data artefacts are visualized in dashboards that allow stakeholders to see results and changes. Data scientists have direct access to the datasets generated by Jetstream to allow for custom analysis. For calculating metrics and [statistics](https://github.com/mozilla/jetstream/wiki/Statistics) Jetstream uses the [mozanalysis library](https://github.com/mozilla/mozanalysis) Python library.
+While there are a few [pre-defined metrics and statistics](https://github.com/mozilla/jetstream/tree/main/jetstream/config) that are calculated for every experiment, it is also possible to provide custom configurations with additional metrics and statistics. These configurations are stored in the [jetstream-config repository](https://github.com/mozilla/jetstream-config) and automatically detected and applied by Jetstream.
 
-When analyzing experiments, the following steps are executed for each experiment:
+During analysis, the following steps are executed for each experiment:
 
-![Jetstream Analysis Steps](https://raw.githubusercontent.com/mozilla/jetstream/main/docs/analysis-steps.png)
+{{< figure src="https://raw.githubusercontent.com/mozilla/jetstream/main/docs/analysis-steps.png" alt="Jetstream Analysis Steps" width="350px" >}}
 *Jetstream experiment analysis steps.*
 
-A default configuration and, if defined, a custom configuration provided via the [jetstream-config repository](https://github.com/mozilla/jetstream-config) are parsed and used for analysis. The experiment definition and config parameters are used to run some checks to determine if the experiment can be analyzed. These checks include, for example, validating start dates, end dates and enrollment periods.
+First, the default configuration and, if defined, a custom configuration provided via the [jetstream-config repository](https://github.com/mozilla/jetstream-config) are parsed and used for analysis. The experiment definition and config parameters are used to run some checks to determine if the experiment can be analyzed. These checks include, for example, validating start dates, end dates and enrollment periods.
 
-If the experiment is valid, then metrics are calculated for each analysis period (daily, weekly, overall) and written to BigQuery. Metrics are either specified or a reference to existing metrics defined in mozanalysis is provided in the configuration files. Next, for each segment, first pre-treatments are applied to the metrics data which is then used to calculate statistics. Statistics data is written to BigQuery and later exported to GCS as JSON.
+If the experiment is valid, then metrics are calculated for each analysis period (daily, weekly, overall) and written to BigQuery. Metrics are either specified as SQL snippets or a reference to existing metrics defined in mozanalysis is provided in the configuration files. Next, for each segment, first pre-treatments are applied to the metrics data which is then used to calculate statistics. Statistics data is written to BigQuery and later exported to GCS as JSON which will be used for displaying results in dashboards.
 
-Initially, jetstream was set up to run on Airflow, constraining it to a single slot with limited amount of memory available which was limiting the analysis speed. For each of these experiments, up to 12 GB of memory are required to calculate statistics. As the number of experiments analyses per day increased simply running the analyses of these experiments in a single Kubernetes pod was not performant anymore. As Airflow does not support creating tasks dynamically during runtime, it was not possible to create separate tasks for each experiment analysis. A different approach was needed.
+Initially, Jetstream was set up to run on Airflow, constraining it to a single slot with limited amount of memory available which was limiting the analysis speed. For each of these experiments, up to 12 GB of memory are required to calculate statistics. As the number of experiments analyses per day increased simply running the analyses of these experiments in a single Kubernetes pod was not performant anymore. As Airflow does not support creating tasks dynamically during runtime, it was not possible to create separate tasks for each experiment analysis. A different approach was needed.
 
 
 ## Parallelizing experiment analyses using Argo
 
-After some research and trying out different approaches, [Argo](https://argoproj.github.io/) turned out to be a great for distributing analyses for different experiments.  
-Argo is a light-weight workflow engine for orchestrating parallel jobs on Kubernetes and is capable of creating tasks dynamically that will be executed in parallel. Using Argo, the analyses for different experiments and analysis dates can be split into separate jobs that run in parallel.
+After some research and trying out different approaches, [Argo](https://argoproj.github.io/) turned out to be perfect for distributing analyses for different experiments.
+Argo is a light-weight workflow engine for orchestrating parallel jobs on Kubernetes and is capable of creating tasks dynamically that will be executed in parallel. Using Argo, the analyses of different experiments can be split into separate jobs that run in parallel.
 
-The setup was quite straightforward: a Kubernetes cluster needed to be set up and Argo was installed on the cluster by following the [installation guide](https://github.com/argoproj/argo/blob/master/docs/quick-start.md). When creating the cluster, BigQuery and Compute Engine read/write permissions needed to be enabled to ensure pods have sufficient access to our telemetry data and can submit Argo workflows.
+The setup was quite straightforward: a Kubernetes cluster needed to be set up and Argo was installed on the cluster by following the [installation guide](https://github.com/argoproj/argo/blob/master/docs/quick-start.md). When creating the cluster, BigQuery and Compute Engine read/write permissions needed to be enabled to ensure pods have sufficient access to  telemetry data and can submit Argo workflows.
 
-[Workflows](https://argoproj.github.io/argo/workflow-concepts/) are one of the core Argo concepts. Workflows define what is being executed. They are written as `yaml` and generally consist of an entrypoint and a list of templates defining the work to be done in each step.
+[Workflows](https://argoproj.github.io/argo/workflow-concepts/) are one of the core Argo concepts and define what is being executed. They are written as `yaml` and generally consist of an entrypoint and a list of templates defining the work to be done in each step.
 
-The workflow spec that is used for the experiment analysis in jetstream is shown in the following:
+The workflow spec that is used for the experiment analysis in Jetstream is shown in the following:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -71,7 +73,7 @@ spec:
             value: "{{item.slug}}"
           - name: date
             value: "{{item.date}}"
-        withParam: "{{inputs.parameters.experiments}}"  # process these experiments in parallel
+        withParam: "{{inputs.parameters.experiments}}"  # process these experiments
         continueOn:
           failed: true
     - - name: export-statistics
@@ -101,7 +103,7 @@ spec:
         limits:
           cpu: 4  # limit to 4 cores
     retryStrategy:
-      limit: 3  # execute a container max. 3x; sometimes a container run might fail due to limited resources
+      limit: 3  # execute a container max. 3x
       retryPolicy: "Always"
       backoff:
         duration: "1m"
@@ -120,43 +122,45 @@ spec:
         "--project_id={{workflow.parameters.project_id}}",
         "--experiment_slug={{inputs.parameters.slug}}"
       ]
-    activeDeadlineSeconds: 600   # terminate container template after 10 minutes
 ```
 
-When jetstream runs its daily analyses, it fetches all active experiments from Experimenter and injects these experiments as `parameter` into the workflow spec. Each experiment is a tuple consisting of a unique experiment identifier (slug) and a date for which data should be processed. The GCP project name and destination dataset in BigQuery where data should be written to need to be specified as `parameter`s as well. 
+When Jetstream runs its daily analyses, it fetches all active experiments from Experimenter and injects these experiments as `parameter` into the workflow spec before the workflow is submitted. Each experiment is a tuple consisting of a unique experiment identifier (slug) and a date for which data should be processed. The GCP project name and destination dataset in BigQuery where data should be written to need to be specified as `parameters` as well. 
 
-The workflow spec defines two steps that are executed for each experiment and date: `analyse-experiment` and `export-statistics`. In the `analyse-experiment` metrics and statistics are calculated and written to BigQuery. `export-statistics` exports all statistics data that has been written to BigQuery as JSON to GCS to make it available to our dashboard tools. Running these steps for each experiment will be done in parallel. Jetstream provides an entrypoint script that allows to specify what the Jetstream container should execute. The `run` and `export-statistics-to-json` are used by the steps defined in the spec.
+The workflow spec defines two steps that are executed for each experiment and date: `analyse-experiment` and `export-statistics`. In the `analyse-experiment` metrics and statistics are calculated and written to BigQuery. `export-statistics` exports all statistics data that has been written to BigQuery as JSON to GCS to make it available to our dashboard tools. Running these steps for each experiment will be done in parallel. Jetstream provides an entrypoint script that allows to specify what the Jetstream container should execute. The `run` and `export-statistics-to-json` commands are used by the steps defined in the spec.
 
 Up to 5 experiment analyses will get executed in parallel. This is to ensure available cluster resources aren't exceeded when too many experiments need to be analysed at the same time. The spec also allows to manage Kubernetes resources. For the `analyse-experiment` step, which is potentially quite compute and memory-usage intensive, the spec ensures that the container has at least 10 Gb of memory available and up to 4 CPU cores. Also, if the step happens to fail, the specified `retryStrategy` ensures that it the container will get executed up to 3 times.
 
-As these workflow parameters might change between runs, jetstream injects them into the workflow spec right before it submits the workflow to Argo. For submitting workflows to Argo, we use the [`argo-client-python`](https://github.com/argoproj-labs/argo-client-python) library. 
+As the workflow `parameters` might change between runs, Jetstream injects them into the workflow spec right before it submits the workflow to Argo. For submitting workflows to Argo, we use the [`argo-client-python`](https://github.com/argoproj-labs/argo-client-python) library. 
 
-In addition to daily analysis runs, jetstream also needed to support running analyses on-demand. When a config in [jetstream-config](https://github.com/mozilla/jetstream-config) changes or a new one is added, all analyses of the affected experiment since the time it had been launched need to be re-executed. The defined workflow also supports this use case. Instead of having a list of tuples consisting of different experiment slugs with the same analysis as `parameter`, it will inject a list of tuples with the experiment slug of the targeted experiment and dates ranging from the start of the experiment until the current date or the end of the experiment.
+In addition to daily analysis runs, Jetstream also needs to support running analyses on-demand. When a config in [jetstream-config](https://github.com/mozilla/jetstream-config) changes or a new one is added, all analyses of the affected experiment starting from the time it had been launched need to be re-executed. The defined workflow also supports this use case. Instead of having a list of tuples consisting of different experiment slugs with the same analysis as `parameter`, Jetstream will inject a list of tuples with the experiment slug of the targeted experiment and dates ranging from the start of the experiment until the current date or the end of the experiment.
 
 Argo provides a neat dashboard for monitoring workflows which is also very useful for debugging. Accessing the dashboard locally requires forwarding the port of the pod running the [Argo Server](https://argoproj.github.io/argo/argo-server/): `kubectl port-forward --namespace argo $(kubectl get pod --namespace argo --selector='app=argo-server' --output jsonpath='{.items[0].metadata.name}') 8080:2746`
 
 ![Argo Dashboard](/img/argo-dashboard.png)
 *Argo Dashboard.*
 
-For each workflow, live status of its job is available with additional information about job parameters, duration and resource usages. For each jobs, logs can be directly accessed through the dashboard.
+For each workflow, live statuses of its jobs are available with additional information about job parameters, duration and resource usages. For each jobs, logs can be directly accessed through the dashboard.
 
 ![Argo Dashboard Workflow](/img/argo-dashboard-workflow.png)
 *Workflow in the Argo Dashboard.*
 
-Using Argo we analyses for days with a large amount of experiments to process were about 2x-3x faster than before. We are still tweaking configuration parameters, such as the number of pods running in parallel, to reduce the runtime even further.
+Using Argo, we were able to run the analyses for days with a lot of experiments up to 3x faster than before. We are still tweaking configuration parameters, such as the number of pods running in parallel, to increase the speed even further.
 
 ## Parallelizing lower-level calculations using Dask
 
-Besides running analyses in parallel, the steps executed during analysis for each experiment also consisted of tasks that could be parallelized. Jetstream calculates for each analysis period (daily, weekly, and overall) a defined set of statistics for a set of segments. To parallelize these lower-level calculations, we decided to use the [Dask](https://dask.org/) Python library. Dask allows to represent complex application logic as tasks in a graph that are executed in parallel on multiple cores.
+Besides running analyses in parallel, the steps executed during analysis for each experiment also consisted of tasks that could be parallelized. Jetstream calculates for each analysis period (daily, weekly, and overall) specific statistics for a set of segments. To parallelize these lower-level calculations, we decided to use the [Dask](https://dask.org/) Python library. Dask allows to represent complex application logic as tasks in a graph that are executed in parallel on multiple cores.
 
-The [dask.delayed](https://docs.dask.org/en/latest/delayed.html) interface is used to turn the functions executing these steps into tasks that are added to a task graph which executes these steps in parallel. Dask is configured to use as many cores as are available on the machine by default, with 1 worker for each core. [Multi-threading is being avoided, instead processes are used](https://docs.dask.org/en/latest/scheduling.html#local-threads) since the code is dominated by Python code, otherwise there wouldn't be any speedup due Python's Global Interpreter Lock.
+The [`dask.delayed`](https://docs.dask.org/en/latest/delayed.html) interface is used to turn the functions executing these steps into tasks that are added to a task graph which executes these steps in parallel. Dask is configured to use as many cores as are available on the machine by default, with 1 worker for each core. [Multi-threading is being avoided, instead processes are used](https://docs.dask.org/en/latest/scheduling.html#local-threads) since the code is dominated by Python code, otherwise there wouldn't be any speedup due Python's Global Interpreter Lock.
 
 Adding Dask required some changes to Jetstreams initial code base. The main changes consisted of [re-writing the analysis functions without nesting](https://github.com/mozilla/jetstream/pull/311) since nested Dask workflows are not supported and [resolving some pickling errors](https://stackoverflow.com/questions/50888391/pickle-of-object-with-getattr-method-in-python-returns-typeerror-object-no).
 
-Using Dask reduced the runtime by half for some compute-intensive experiments.
+Using Dask reduced the runtime by half for compute-intensive experiments.
 
 ## Conclusions
 
-Overall, integrating Argo and Dask in our existing Jetstream codebase did not require us to make a whole lot of changes. Most of the code did not require any changes at all which made the process of of speeding up our automatic experiment analysis infrastructure a fast one. Currently, the analyses complete about 6x faster compared to our original setup.
+{{< figure src="/img/jetstream-argo.png" alt="Jetstream Argo" width="400px" >}}
+*Jetstream with Argo and Dask.*
 
-There is still some room for improvement in finding the best configuration parameters that might result in an even larger speedup. Addiontal speedup could be achieved by using [Dask Kubernetes](https://kubernetes.dask.org/en/latest/) which deploys Dask workers on the cluster instead of just the single pod running the analysis for an experiment. The setup for Dask Kubernetes turned out to be relatively complicated, but it might be something worth investigating if the number of experiments keeps increasing in the future.
+Overall, integrating Argo and Dask into our existing Jetstream codebase did not require a whole lot of changes. Most of the code stayed the same as before which made the process of of speeding up our automated experiment analysis infrastructure a fast one. Currently, analyses complete up to 6x faster compared to our original setup.
+
+There is still some room for improvement in finding the best configuration parameters that might result in an even larger speedup. Additiontal speedup could be achieved by using [Dask Kubernetes](https://kubernetes.dask.org/en/latest/) which deploys Dask workers on the cluster instead of just the single pod running the analysis for an experiment. The setup for Dask Kubernetes turned out to be relatively complicated, but it might be something worth investigating if the number of experiments keeps increasing in the future.
