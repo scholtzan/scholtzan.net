@@ -111,5 +111,6 @@ If the _Filament Change On Tool Change_ script was used for slicing, the printer
 
 If the _Pause At Height On Tool Change_ scripts was used for slicing, the filament change needs to be performed manually and once completed _Resume_ needs to be triggered.
 
-![Cura Slicing](https://github.com/scholtzan/cura-multicolor-single-extruder/blob/main/images/finished-print.png)
+{{< figure src="https://raw.githubusercontent.com/scholtzan/cura-multicolor-single-extruder/main/images/finished-print.png" alt="Finished print" >}}
+*Finished print: cube (white) within a cube (blue)*
 
