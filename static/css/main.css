@@ -1,5 +1,16 @@
 @import url("pygment_highlights.css");
 
+@font-face {
+  font-family: "Inconsolata";
+  src: url(../fonts/Inconsolata-Regular.ttf);
+}
+
+
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url(../fonts/SourceSansPro-Light.ttf);
+}
+
 /* --- General --- */
 
 html {
